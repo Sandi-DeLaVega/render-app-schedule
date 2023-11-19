@@ -1,0 +1,469 @@
+.content{
+ width: 100%;
+ background: #F7F7F7;
+ font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+ }
+
+.tab.jsx-3500593569 {
+border: white;
+}
+
+.jsx-3500593569 tab {
+border: white;
+}
+
+.div-output-steps{
+	"word-wrap": "break-word"
+ 	overflow-y: scroll;
+}
+
+.tableformat{
+border-collapse: collapse; 
+        table-layout: fixed;
+}
+
+.tableformat td{
+word-wrap: break-word;
+}
+
+.table2format{
+border-collapse: collapse;
+        table-layout: fixed;
+}
+
+.table2format td{
+word-wrap: break-word;
+}
+
+
+
+.button_upload {
+	background-color: #008CBA;
+	color: white;
+	margin-left: 6px;
+	margin-right: 6px;
+	font-size: 14px;
+	text-align: center;
+	border-radius: 3rem;
+	padding: 5px 5px;
+	} /* Blue */
+
+.button_upload:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.button_submit:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.button_clear {
+	background-color: #f44336;
+	color: white;
+	margin-left: 6px;
+    margin-right: 6px;
+	font-size: 14px;
+	text-align: center;
+	border-radius: 5rem;
+	padding: 5px 15px;
+	} /* Red */
+
+
+.button_submit {
+	background-color: #3aa803;
+	color: white;
+	margin-left: 6px;
+    margin-right: 6px;
+	font-size: 14px;
+	text-align: center;
+	border-radius: 5rem;
+	padding: 5px 15px;
+	} /* Green */
+
+.button_clear:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+
+
+.container {
+  border: 0px solid rgba(0, 0, 0, 0.8);
+  row-gap: 2px;
+  column-gap: 2px;
+  padding: 1px;
+  height: 100%;
+width: 100%;
+margin: 0 auto;
+  font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.grid-container-header {
+  border: 2px solid darkgrey;
+  display: grid;
+  gap: 1px;
+  column-gap: 15px;
+  background-color: #5791CE;
+  padding: 1px;
+  grid-template-columns: 60% 30%;
+  font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+
+.grid-container-footer {
+  border: 2px solid darkgrey;
+  display: grid;
+  gap: 1px;
+  column-gap: 15px;
+  background-color: #ED213B;
+  padding: 1px;
+  grid-template-columns: 60% 30%;
+  font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+
+.grid-weekly-sched-data{
+    overflow-y: scroll;
+}
+
+.grid-container2 {
+  border: 2px solid darkgrey;
+  display: grid;
+  gap: 1px;
+  column-gap: 15px;
+  background-color: navy;
+  padding: 1px;
+  grid-template-columns: 60% 30%;
+  font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.text-outputarea{
+	display: grid;
+	font:#7F7F7F;
+	font-weight: bold;
+	font-size: 14px;
+}
+
+.text-outputarea-kbarticleurl{
+	display: grid;
+	font:#7F7F7F;
+	font-size: 14px;
+	border: 1px solid darkgrey;
+	padding: 5px 5px;
+	word-break: break-word;
+}
+
+.col-4{
+padding: 3px;
+}
+.columns-input{
+padding: 5px;
+}
+
+.header { 
+	font-size: 20px; 
+	line-height: 1.2; 
+	margin-bottom: 2px; 
+	font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif; }
+
+.header-article { 
+	font-size: 20px; 
+    font: #173759;
+    font-weight: 'bold',
+	line-height: 1.2; 
+	margin-top: 2px; 
+	margin-bottom: 5px; 
+    text-align: center;
+	font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif; }
+
+.header-subtitle { 
+	font-size: 16px; 
+	line-height: 1.2; 
+	margin-top: 2px; 
+	margin-bottom: 5px; 
+    text-align: center;
+	font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif; }
+
+.header-url { 
+	font-size: 18px; 
+	line-height: 1.2;
+	margin-top: 10px; 
+	margin-bottom: 12px; 
+
+	font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif; }
+
+
+
+
+.header-input { 
+	font-size: 18px; 
+	line-height: 1.2; 
+	margin-bottom: 12px; 
+	grid-template-columns: 40% 60%;
+	display: flex; 
+	column-gap: 5px;
+	font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif; }
+
+.header-input-text{
+	padding: 5px
+	column-gap: 5px;
+	margin-right: 5px;
+	font-size: 18px;
+}
+
+.header-button
+{ column-gap: 2px;
+
+}
+
+
+.item1 {
+  background-color: #5791CE;
+  color: white;
+  border: 0px solid rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  font-size: 24px;
+  text-align: left;
+  font-family: "Montserrat";
+  font-weight: bold;
+}
+
+.item2 {
+  background-color: #ED213B;
+  color: white;
+  border: 0px solid rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  font-size: 18px;
+  text-align: left;
+  font-family: "Montserrat";
+  font-weight: bold;
+}
+
+.item5 {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 0px solid rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  font-size: 15px;
+  text-align: left;
+  font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.grid-item-tab-main {
+ background-color: rgba(255, 255, 255, 0.8);
+  /*border: 1px solid rgba(0, 0, 0, 0.8);*/
+  height: 100%;
+  padding: 5px;
+  font-size: 14px;
+  text-align: left;
+  min-height: 1050px;
+  max-height: 1050px;
+    /*border-style: dotted;*/
+     /*border-color: rgba(50, 115, 220, 0.3);*/
+  font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.grid-item-tab-main-data {
+ background-color: rgba(255, 255, 255, 0.8);
+  /*border: 1px solid rgba(0, 0, 0, 0.8);*/
+  height: 100%;
+  padding: 5px;
+  font-size: 14px;
+  text-align: left;
+  min-height: 550px;
+  max-height: 550px;
+    /*border-style: dotted;*/
+     /*border-color: rgba(50, 115, 220, 0.3);*/
+  font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.grid-item-tab-sub {
+ background-color: rgba(255, 255, 255, 0.8);
+  border: #5791CE;
+    border-width: thin;
+  height: 100%;
+    min-height: 400px;
+    max-height: 400px;
+  padding: 5px;
+  font-size: 14px;
+  text-align: left;
+    border-style: dotted;
+    /* border-color: rgba(50, 115, 220, 0.3);*/
+  font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.grid-item-main-data {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  height: 100%;
+   min-height: 900px;
+   max-height: 900px;
+  padding: 3px;
+  font-size: 14px;
+  text-align: left;
+  font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+
+.grid-item-main {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  height: 100%;
+   min-height: 550px;
+   max-height: 550px;
+  padding: 3px;
+  font-size: 14px;
+  text-align: left;
+  font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+
+.grid-item-main-weekly-sched {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  height: 100%;
+   min-height: 450px;
+   max-height: 450px;
+  padding: 3px;
+  font-size: 14px;
+  text-align: left;
+  font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.grid-item-main-hourly-sched {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  height: 100%;
+   min-height: 550px;
+   max-height: 550px;
+  padding: 3px;
+  font-size: 14px;
+  text-align: left;
+  font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+
+
+
+.grid-item-sub-buttons {
+  background-color: rgba(255, 255, 255, 0.8);
+   border: 1px solid rgba(0, 0, 0, 0);
+  height: 100%;
+    min-height: 300px;
+  padding: 5px;
+    
+  font-size: 14px;
+  text-align: left;
+  font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.grid-item-sub-grid {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  height: 100%;
+    min-height: 600px;
+  padding: 5px;
+  font-size: 14px;
+  text-align: left;
+
+  /* border-color: rgba(50, 115, 220, 0.3);*/
+  font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.grid-item-sub-grid-data {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  height: 100%;
+    min-height: 500px;
+  padding: 5px;
+  font-size: 14px;
+  text-align: left;
+
+  /* border-color: rgba(50, 115, 220, 0.3);*/
+  font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.grid-item-input {
+  background-color: rgba(255, 255, 255, 0.8);
+   border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 10px;
+    min-height: 300px;
+max-height: 310px;
+  font-size: 14px;
+  text-align: left;
+  font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.grid-item-output {
+  background-color: rgba(255, 255, 255, 0.8);
+   border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 2px;
+    min-height: 500px;
+  font-size: 14px;
+  text-align: left;
+max-height: 500px;
+  font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+
+
+.grid-item2 {
+  border: 0px solid rgba(0, 0, 0, 0.8);
+  padding: 0px;
+  font-size: 15px;
+  text-align: right;
+  font-family: "Montserrat", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.link_color {
+  color: green;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+
+
+
+
+.tab_style_main {
+    background-color: rgba(255, 205, 0, 0.3),
+    text-transform: uppercase,
+    color: #868383,
+    border: #303130,
+    border-style: solid,
+    border-radius: 4px,
+    font-size: 24px,
+    font-weight: 400,
+    align-items: center,
+    justify-content: cente,
+    padding: 7px,
+}
+
+
+.tab_selected_style_main_1st = {
+    background-color: #5791CE,
+    text-transform: uppercase,
+    color: white,
+    font-size: 24px,
+    font-weight: 600,
+    align-items: center,
+    justify-content: center,
+    border: #303130,
+    border-style: solid,
+    border-radius: 4px,
+     padding:7px,
+}
+
+.tab_selected_style_main_2nd = {
+    background-color: #ED213B,
+    text-transform: uppercase,
+    color: white,
+    font-size: 24px,
+    font-weight: 600,
+    align-items: center,
+    justify-content: center,
+    border: #303130,
+    border-style: solid,
+    border-radius: 4px,
+     padding:7px,
+}
