@@ -13,7 +13,7 @@ from dash.exceptions import PreventUpdate
 import io
 import dash_bootstrap_components as dbc
 import base64
-from flask import Flask
+#from flask import Flask
 import os
 import re
 import pandas as pd
@@ -181,9 +181,9 @@ Keywords, score, playbook_tagging, decision_set = [], [], [], []
 assets_path = os.getcwd() +'\\assets'
 dbc_css = os.path.join("assets_path", "scheduler_v1_3.css")
 
-server = Flask(__name__)
+#server = Flask(__name__)
 #changed by uncommenting server = Flask
-app = Dash(server = server,  external_stylesheets=[dbc.themes.BOOTSTRAP, dbc_css])
+app = Dash(__name__,  external_stylesheets=[dbc.themes.BOOTSTRAP, dbc_css])
 server = app.server
 #app = JupyterDash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, dbc_css])
 
@@ -2438,5 +2438,5 @@ def export_to_excel(n_clicks, export_state, gen_disabled, h1_data, h2_data, c_da
 
 
 if __name__ == "__main__":
-    app.run_server( use_reloader=False, debug = False)
+    app.run_server(debug = False)
     
