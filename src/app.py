@@ -2310,6 +2310,7 @@ def update_output_sales(contents, data, filename):
 
 @app.callback(
     [Output("export-button", "n_clicks"),
+     Output("export-button", "data"),
     Output("export-button-status-text", "children"),
     ],
     [Input("export-button", "n_clicks"),
@@ -2330,14 +2331,14 @@ def export_to_excel(n_clicks, export_state, gen_disabled, h1_data, h2_data, c_da
     #global dataframes_summary
     
     if gen_disabled is True:
-        return None, html.H5("Please upload files in 1. Input/Upload Data Tab.")
+        return None, None, html.H5("Please upload files in 1. Input/Upload Data Tab.")
 
     else:  
         if export_state is True:
-            return None, html.H5("Press Generate Schedule Button at 1. Input/Upload Data Tab.")
+            return None, None, html.H5("Press Generate Schedule Button at 1. Input/Upload Data Tab.")
         
         if n_clicks is None:
-            return None, html.H5("Results Ready to Export to Excel.")
+            return None, None, html.H5("Results Ready to Export to Excel.")
         
         else: 
             headcount_per_hour1 = pd.DataFrame(h1_data)
@@ -2431,11 +2432,11 @@ def export_to_excel(n_clicks, export_state, gen_disabled, h1_data, h2_data, c_da
             excel_writer.close()
 
             # Open the Excel file using the default program
-	    #instead of start because render uses linux
             #subprocess.run(['xdg-open', filename_path], shell=True)
-            webbrowser.open(filename_path)            
+            #webbrowser.open(filename_path)            
             
-            return None, html.H5("Results Exported Successfully. Please save the file manually.")
+            return None, dcc.send_file(filename_path),\
+                html.H5("Results Exported Successfully. Please save the file manually.")
 
 
 
