@@ -20,7 +20,7 @@ import pandas as pd
 import random
 import numpy as np
 from openpyxl import Workbook
-
+from io import BytesIO
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -2395,12 +2395,12 @@ def export_to_excel(n_clicks, export_state, gen_disabled, h1_data, h2_data, c_da
             }
             
             # Save the Excel file to the Downloads folder
-            downloads_folder = os.path.join(os.path.expanduser("~"), "Downloads")
-            filename_path = f"results_export_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.xlsx"
-            excel_file_path = os.path.join(downloads_folder, filename_path)
+            #downloads_folder = os.path.join(os.path.expanduser("~"), "Downloads")
+            #filename_path = f"results_export_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.xlsx"
+            #excel_file_path = os.path.join(downloads_folder, filename_path)
 
             # Create a Pandas Excel writer using openpyxl
-            excel_writer = pd.ExcelWriter(excel_file_path, 
+            excel_writer = pd.ExcelWriter(filename_path, 
                                           engine='openpyxl')
 
 
@@ -2430,10 +2430,10 @@ def export_to_excel(n_clicks, export_state, gen_disabled, h1_data, h2_data, c_da
             excel_writer.close()
 
             # Open the Excel file using the default program
-            subprocess.run(['start', excel_file_path], shell=True)
+            subprocess.run(['start', 'excel', filename_path], shell=True)
             
             
-            return None, html.H5("Results Exported Successfully")
+            return None, html.H5("Results Exported Successfully. Please save the file manually.")
 
 
 
