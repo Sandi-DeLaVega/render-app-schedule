@@ -2396,7 +2396,7 @@ def export_to_excel(n_clicks, export_state, gen_disabled, h1_data, h2_data, c_da
             
             # Save the Excel file to the Downloads folder
             #downloads_folder = os.path.join(os.path.expanduser("~"), "Downloads")
-            #filename_path = f"results_export_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.xlsx"
+            filename_path = f"results_export_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.xlsx"
             #excel_file_path = os.path.join(downloads_folder, filename_path)
 
             # Create a Pandas Excel writer using openpyxl
