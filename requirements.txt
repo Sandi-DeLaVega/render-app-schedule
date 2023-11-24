@@ -1,6 +1,6 @@
 dash==2.7.0
 dash_bootstrap_components==1.4.0
-dash-bootstrap-templates=1.0.8
+dash-bootstrap-templates==1.0.8
 Flask==2.0.3
 numpy==1.21.5
 openpyxl==3.1.2
