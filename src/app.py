@@ -2430,7 +2430,8 @@ def export_to_excel(n_clicks, export_state, gen_disabled, h1_data, h2_data, c_da
             excel_writer.close()
 
             # Open the Excel file using the default program
-            subprocess.run(['start', filename_path], shell=True)
+	    #instead of start because render uses linux
+            subprocess.run(['xdg-open', filename_path], shell=True)
             
             
             return None, html.H5("Results Exported Successfully. Please save the file manually.")
