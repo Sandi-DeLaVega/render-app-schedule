@@ -245,7 +245,7 @@ app.layout = html.Div(
                 html.Div(
                     className="item1",
                     children=[
-                        html.Div('Scheduler App Version 5.3.1'), 
+                        html.Div('Scheduler App Version 5.4'), 
                         ], ), 
                 html.Div(
                     className="grid-item2",
@@ -953,7 +953,7 @@ app.layout = html.Div(
                 html.Div(
                     className="item2",
                     children=[
-                        html.Div('Updated as of Nov 18, 2023'), 
+                        html.Div('Updated as of Dec 2, 2023'), 
                         ], ), 
                 html.Div(
                     className="grid-item2",
@@ -2325,14 +2325,14 @@ def update_output_sales(contents, data, filename):
 
 
 @app.callback(
-    [Output("export-button", "n_clicks"),
-     Output("download_component", "data"),
+    [Output("download_component", "data"),
      Output("download_component_daily", "data"),
      Output("download_component_cdata", "data"),
     Output("export-button-status-text", "children"),
     ],
-    #Input("export-button", "n_clicks"),
-     [Input('export-button', 'disabled'),],
+    
+    [Input("export-button", "n_clicks"),
+     Input('export-button', 'disabled'),],
     
     [State('generate--model-button','disabled'),
      State('cashier-reporting-data', 'data'),
@@ -2341,7 +2341,7 @@ def update_output_sales(contents, data, filename):
      ],
     prevent_initial_call=True,
 )
-def export_to_excel(export_state, gen_disabled, #h1_data, h2_data, 
+def export_to_excel(n_clicks, export_state, gen_disabled, #h1_data, h2_data, 
                     c_data, 
                     w_data,
                     #w_data_gen, 
@@ -2356,8 +2356,8 @@ def export_to_excel(export_state, gen_disabled, #h1_data, h2_data,
         if export_state:
             return None, None, None, html.H5("Press Generate Schedule Button at 1. Input/Upload Data Tab.")
         
-        #if n_clicks is None:
-            #return None, None, None, None, html.H5("Results Ready to Export to Excel.")
+        if export_state is False:
+            return None, None, None,html.H5("Results Ready to Export to Excel.")
         
         else: 
             #headcount_per_hour1 = pd.DataFrame(h1_data)
