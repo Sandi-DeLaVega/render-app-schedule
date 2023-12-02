@@ -1675,11 +1675,11 @@ def generate_table(n_clicks, pdata, data1, data2):
         
         hourly_sched_df_sun = pd.DataFrame(main_dict_results["Sunday"])
         red_col_hc = hourly_sched_df_sun.columns.tolist()
-        red_col_hc.pop("Allocated")
-        red_col_hc.pop("To Allocate")
-        red_col_hc.pop("Start at")
-        red_col_hc.pop("Hour Break")
-        red_col_hc.pop("Phase")
+        red_col_hc.remove("Allocated")
+        red_col_hc.remove("To Allocate")
+        red_col_hc.remove("Start at")
+        red_col_hc.remove("Hour Break")
+        red_col_hc.remove("Phase")
         hourly_sched_df_sun = hourly_sched_df_sun[red_col_hc]
         
         hourly_sched_df_mon = pd.DataFrame(main_dict_results["Monday"])
@@ -2247,9 +2247,9 @@ def update_output_sales(contents, data, filename):
             
             #Reduced Columns
             red_columns = df.columns.tolist()
-            red_columns.pop('HC Needed')
-            red_columns.pop('Total')
-            red_columns.pop('Max')
+            red_columns.remove('HC Needed')
+            red_columns.remove('Total')
+            red_columns.remove('Max')
             df = df[red_columns]
             
             table = html.Div([
