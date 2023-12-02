@@ -1135,23 +1135,8 @@ def generate_table(n_clicks, pdata, data1, data2):
         cashiers_reporting = cashiers_reporting[["Employment Type", "Sunday",
                                                  "Monday", "Tuesday", "Wednesday",
                                                  "Thursday", "Friday", "Saturday"]]
-        
-        weekly_sched_df_dash =  html.Div([
-                                html.H5('Cashier Reporting'),
-                                dash_table.DataTable(id = 'cashier_reporting_table', 
-                                columns = [{'name': i, 'id': i} \
-                                    for i in cashiers_reporting.columns], 
-                                    data = cashiers_reporting.to_dict('records'), 
-                                   style_data = {
-                                        'whiteSpace': 'normal',
-                                       'height': 'auto',},
-                                                 style_table={'overflowY': 'auto'},
-                                                 page_size = 6,
-                                                  style_data_conditional = style_data_conditional,
-                                                 style_cell = style_cell_option_script, 
-                                                 style_header = style_header_option_script),
-                                    
-                                html.Br(),
+        #Removed Cashier Reporting Display
+        weekly_sched_df_dash =  html.Div([\
                                 html.H5('Schedule'),
                                 
                                 dash_table.DataTable(id = 'weekly_sched_table', 
@@ -2239,12 +2224,13 @@ def update_output_sales(contents, data, filename):
             store_data_df_hour1 = store_data_df_hour1.to_dict('records')
             store_data_df_hour2 = store_data_df_hour2.to_dict('records')
             df["New HC Needed"] = headcount_per_hour2["New HC Needed"]
+            
             #Reduced Columns
-            #red_columns = df.columns.tolist()
-            #red_columns.pop('HC Needed')
-            #red_columns.pop('Total')
-            #red_columns.pop('Max')
-            #df = df[red_columns]
+            red_columns = df.columns.tolist()
+            red_columns.pop('HC Needed')
+            red_columns.pop('Total')
+            red_columns.pop('Max')
+            df = df[red_columns]
             
             table = html.Div([
                 html.H5(f'Uploaded Excel File: {filename}'),
@@ -2332,14 +2318,15 @@ def update_output_sales(contents, data, filename):
     [Input("export-button", "n_clicks"),
      Input('export-button', 'disabled'),],
     
-    [Input('generate--model-button','disabled'),
+    [State('generate--model-button','disabled'),
      #State('headcount_per_hour1', 'data'), 
      #State('headcount_per_hour2', 'data'),
      State('cashier-reporting-data', 'data'),
      State('weekly-sched-df-data', 'data'),
      #State('weekly_sched_gen-data', 'data'),
      State('all-data', 'data'),
-     ]
+     ],
+    prevent_initial_call=True,
 )
 def export_to_excel(n_clicks, export_state, gen_disabled, #h1_data, h2_data, 
                     c_data, 
