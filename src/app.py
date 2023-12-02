@@ -5,23 +5,23 @@
 #With Model Generation
 
 #from jupyter_dash import JupyterDash
-import subprocess
-import webbrowser
+#import subprocess
+#import webbrowser
 import os
-from dash import dcc, html, dash_table, ctx, no_update, Dash
+from dash import dcc, html, dash_table, Dash #ctx, no_update
 from dash.dependencies import Input, Output, State
-from dash.exceptions import PreventUpdate
+#from dash.exceptions import PreventUpdate
 import io
 import dash_bootstrap_components as dbc
 import base64
 #from flask import Flask
-import os
-import re
+#import os
+#import re
 import pandas as pd
 import random
 import numpy as np
-from openpyxl import Workbook
-from io import BytesIO
+#from openpyxl import Workbook
+#from io import BytesIO
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -146,6 +146,9 @@ day_off_matrix = {
 
 day_off_matrix_df = pd.DataFrame(day_off_matrix)
 day_off_matrix_df.set_index('Dayoff', inplace =True)
+download_component = dcc.Download()
+download_component_daily = dcc.Download()
+download_component_cdata = dcc.Download()
 # -------------------------------------------------
 
 style_data_conditional = [
@@ -367,7 +370,8 @@ app.layout = html.Div(
                                                                  className = "button_gen_sched_div",
                                                                  children = [html.Button("Generate Schedule", id="generate--model-button", 
                                                                                          className = "button_gen_sched",
-                                                                                         disabled=True)
+                                                                                         disabled=True),
+                                                                             
                                                                              ]),
                                                              
                                                              ], width = 8),
@@ -916,7 +920,9 @@ app.layout = html.Div(
                                                     className = "button_download_div",
                                                     children = [html.Button("Export to Excel", id="export-button", 
                                                                             className = "button_download"),]),
-                                                
+                                                download_component,
+                                                download_component_daily,
+                                                download_component_cdata,
                                                 ], width = 2),
                                             
                                             
@@ -964,6 +970,7 @@ app.layout = html.Div(
                 dcc.Store(id = "weekly-sched-df-data", data = [], storage_type = "memory"),
                 dcc.Store(id = "weekly_sched_gen-data", data = [], storage_type = "memory"),
                 dcc.Store(id = "all-data", data = [], storage_type = "memory"),
+                
              ] #end of main layout children
          ) #end of main layout
     
@@ -2232,6 +2239,11 @@ def update_output_sales(contents, data, filename):
             store_data_df_hour1 = store_data_df_hour1.to_dict('records')
             store_data_df_hour2 = store_data_df_hour2.to_dict('records')
             df["New HC Needed"] = headcount_per_hour2["New HC Needed"]
+            #Reduced Columns
+            #red_columns = df.columns.tolist()
+            #red_columns.pop('New HC Needed')
+            #red_columns.pop('')
+            #df_red = df.
             
             table = html.Div([
                 html.H5(f'Uploaded Excel File: {filename}'),
@@ -2252,6 +2264,7 @@ def update_output_sales(contents, data, filename):
             ])
             
             #Temporary
+            """
             table_H1 = html.Div([
                 html.H5('Headcount Per Hour Calculation'),
                 dash_table.DataTable(
@@ -2287,11 +2300,11 @@ def update_output_sales(contents, data, filename):
                         style_header = style_header_option_script
                 )
             ])
-            
+            """
             return [table], [html.Div(className = "header-article-upload" , 
                                       children = ["Upload Successful"])], \
                     store_data_df_hour1, store_data_df_hour2, \
-                    [table_H1], [table_H2]
+                    [], []
         
         else:
             return [html.Div(className = "header-article-upload" , 
@@ -2310,55 +2323,83 @@ def update_output_sales(contents, data, filename):
 
 @app.callback(
     [Output("export-button", "n_clicks"),
-     Output("export-button", "data"),
+     Output("download_component", "data"),
+     Output("download_component_daily", "data"),
+     Output("download_component_cdata", "data"),
     Output("export-button-status-text", "children"),
     ],
     [Input("export-button", "n_clicks"),
      Input('export-button', 'disabled'),
       Input('generate--model-button','disabled'),],
     
-    [State('headcount_per_hour1', 'data'), 
-     State('headcount_per_hour2', 'data'),
+    [
+     #State('headcount_per_hour1', 'data'), 
+     #State('headcount_per_hour2', 'data'),
      State('cashier-reporting-data', 'data'),
      State('weekly-sched-df-data', 'data'),
-     State('weekly_sched_gen-data', 'data'),
+     #State('weekly_sched_gen-data', 'data'),
      State('all-data', 'data'),
      ]
 )
-def export_to_excel(n_clicks, export_state, gen_disabled, h1_data, h2_data, c_data, w_data,
-                    w_data_gen, all_data):
+def export_to_excel(n_clicks, export_state, gen_disabled, #h1_data, h2_data, 
+                    c_data, 
+                    w_data,
+                    #w_data_gen, 
+                    all_data):
     #global dataframes
     #global dataframes_summary
     
     if gen_disabled is True:
-        return None, None, html.H5("Please upload files in 1. Input/Upload Data Tab.")
+        return None, None, None,None, html.H5("Please upload files in 1. Input/Upload Data Tab.")
 
     else:  
         if export_state is True:
-            return None, None, html.H5("Press Generate Schedule Button at 1. Input/Upload Data Tab.")
+            return None, None, None, None, html.H5("Press Generate Schedule Button at 1. Input/Upload Data Tab.")
         
         if n_clicks is None:
-            return None, None, html.H5("Results Ready to Export to Excel.")
+            return None, None, None, None, html.H5("Results Ready to Export to Excel.")
         
         else: 
-            headcount_per_hour1 = pd.DataFrame(h1_data)
-            headcount_per_hour2 = pd.DataFrame(h2_data)
+            #headcount_per_hour1 = pd.DataFrame(h1_data)
+            #headcount_per_hour2 = pd.DataFrame(h2_data)
             weekly_sched_df = pd.DataFrame(w_data)
             cashiers_reporting = pd.DataFrame(c_data)
-            weekly_sched_gen  = pd.DataFrame(w_data_gen)
+            #weekly_sched_gen  = pd.DataFrame(w_data_gen)
             
-            dataframe_hourly_basis = all_data["Hourly Basis"]
-            dataframe_hourly_basis_df = pd.DataFrame(dataframe_hourly_basis).T.reset_index()
+            #dataframe_hourly_basis = all_data["Hourly Basis"]
+            #dataframe_hourly_basis_df = pd.DataFrame(dataframe_hourly_basis).T.reset_index()
 
             main_dict_results = all_data["Main"]
             hourly_sched_df_sun = pd.DataFrame(main_dict_results["Sunday"])
+            hourly_sched_df_sun["Day"] = "Sun"
+            
             hourly_sched_df_mon = pd.DataFrame(main_dict_results["Monday"])
+            hourly_sched_df_mon["Day"] = "Mon"
+            
             hourly_sched_df_tue = pd.DataFrame(main_dict_results["Tuesday"])
+            hourly_sched_df_tue["Day"] = "Tue"
+            
             hourly_sched_df_wed = pd.DataFrame(main_dict_results["Wednesday"])
+            hourly_sched_df_wed["Day"] = "Wed"
+            
             hourly_sched_df_thu = pd.DataFrame(main_dict_results["Thursday"])
+            hourly_sched_df_thu["Day"] = "Thu"
+            
             hourly_sched_df_fri  = pd.DataFrame(main_dict_results["Friday"])
+            hourly_sched_df_fri["Day"] = "Fri"
+            
             hourly_sched_df_sat = pd.DataFrame(main_dict_results["Saturday"])
-
+            hourly_sched_df_sat["Day"] = "Sat"
+            
+            hc_summary = pd.concat([hourly_sched_df_sun,
+                                    hourly_sched_df_mon,
+                                    hourly_sched_df_tue,
+                                    hourly_sched_df_wed,
+                                    hourly_sched_df_thu,
+                                    hourly_sched_df_fri,
+                                    hourly_sched_df_sat])
+            
+            """
             summary_dict_results = all_data["Summary"]
             hourly_sched_df_sun_summary = pd.DataFrame(summary_dict_results["Sunday"])#.set_index('index')
             hourly_sched_df_mon_summary = pd.DataFrame(summary_dict_results["Monday"])#.set_index('index')
@@ -2367,7 +2408,11 @@ def export_to_excel(n_clicks, export_state, gen_disabled, h1_data, h2_data, c_da
             hourly_sched_df_thu_summary = pd.DataFrame(summary_dict_results["Thursday"])#.set_index('index')
             hourly_sched_df_fri_summary = pd.DataFrame(summary_dict_results["Friday"])#.set_index('index')
             hourly_sched_df_sat_summary = pd.DataFrame(summary_dict_results["Saturday"])#.set_index('index')
+            """
             
+            
+            
+            """
             
             dataframes = {
                 'WeeklySched': {'Summary': cashiers_reporting,
@@ -2395,7 +2440,7 @@ def export_to_excel(n_clicks, export_state, gen_disabled, h1_data, h2_data, c_da
                                 "Hourly Check": dataframe_hourly_basis_df,}
                 
             }
-            
+            """
             # Save the Excel file to the Downloads folder
             #downloads_folder = os.path.join(os.path.expanduser("~"), "Downloads")
             filename_path = f"results_export_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.xlsx"
@@ -2435,7 +2480,9 @@ def export_to_excel(n_clicks, export_state, gen_disabled, h1_data, h2_data, c_da
             #subprocess.run(['xdg-open', filename_path], shell=True)
             #webbrowser.open(filename_path)            
             
-            return None, dcc.send_file(filename_path),\
+            return None, dcc.send_data_frame(hc_summary.to_csv,"hourly_csv.csv"),\
+                dcc.send_data_frame(weekly_sched_df.to_csv, "daily_sched.csv"), \
+                dcc.send_data_frame(cashiers_reporting.to_csv,"cashiers_reporting.csv"), \
                 html.H5("Results Exported Successfully. Please save the file manually.")
 
 
