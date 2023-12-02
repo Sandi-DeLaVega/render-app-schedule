@@ -2241,9 +2241,10 @@ def update_output_sales(contents, data, filename):
             df["New HC Needed"] = headcount_per_hour2["New HC Needed"]
             #Reduced Columns
             #red_columns = df.columns.tolist()
-            #red_columns.pop('New HC Needed')
-            #red_columns.pop('')
-            #df_red = df.
+            #red_columns.pop('HC Needed')
+            #red_columns.pop('Total')
+            #red_columns.pop('Max')
+            #df = df[red_columns]
             
             table = html.Div([
                 html.H5(f'Uploaded Excel File: {filename}'),
@@ -2329,10 +2330,9 @@ def update_output_sales(contents, data, filename):
     Output("export-button-status-text", "children"),
     ],
     [Input("export-button", "n_clicks"),
-     Input('export-button', 'disabled'),
-      Input('generate--model-button','disabled'),],
+     Input('export-button', 'disabled'),],
     
-    [
+    [Input('generate--model-button','disabled'),
      #State('headcount_per_hour1', 'data'), 
      #State('headcount_per_hour2', 'data'),
      State('cashier-reporting-data', 'data'),
@@ -2349,11 +2349,11 @@ def export_to_excel(n_clicks, export_state, gen_disabled, #h1_data, h2_data,
     #global dataframes
     #global dataframes_summary
     
-    if gen_disabled is True:
+    if gen_disabled:
         return None, None, None,None, html.H5("Please upload files in 1. Input/Upload Data Tab.")
 
     else:  
-        if export_state is True:
+        if export_state:
             return None, None, None, None, html.H5("Press Generate Schedule Button at 1. Input/Upload Data Tab.")
         
         if n_clicks is None:
