@@ -914,7 +914,6 @@ app.layout = html.Div(
                                                 html.Div(id = 'export-button-status-text',
                                                          children = []),
                                                 html.A("Download Hourly.csv", id="download-link", download="hourly.csv", href="",
-                                                       style={'display': 'none', 'fontSize': 16, 'fontWeight': 'bold', 'pointerEvents': 'none', 'color': 'gray'},
                                                        target="_blank"),
                                                 ], width = 10),
                                             dbc.Col([
@@ -2290,8 +2289,7 @@ def update_output_sales(contents, data, filename):
 
 @app.callback(
     [Output("download_component", "data"),
-     Output("export-button-status-text", "children"),
-     Output("download-link", "style")],
+     Output("export-button-status-text", "children")],
     [Input("export-button", "n_clicks")],
     [State('hourly_sched_df_sun_table', 'derived_virtual_data'),
      State('hourly_sched_df_mon_table', 'derived_virtual_data'),
@@ -2348,9 +2346,7 @@ def export_to_excel(n_clicks, sun_data, mon_data, tue_data,
     # Specify the filename in the to_csv method
     csv_string = dff.to_csv(index=False, encoding="utf-8")
     
-    return csv_string, html.H3("Click on Download Link"), \
-        {'display': 'block', 'fontSize': 16, 'fontWeight': 'bold',
-         'pointerEvents': 'auto', 'color': 'black'}
+    return csv_string, html.H3("Click on Download Link")
 
 
 @app.callback(
