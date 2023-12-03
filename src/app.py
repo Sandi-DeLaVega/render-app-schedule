@@ -8,7 +8,7 @@
 #import subprocess
 #import webbrowser
 import os
-from dash import dcc, html, dash_table, Dash #ctx, no_update
+from dash import dcc, html, dash_table, Dash, no_update #ctx, 
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import io
@@ -245,7 +245,7 @@ app.layout = html.Div(
                 html.Div(
                     className="item1",
                     children=[
-                        html.Div('Scheduler App Version 5.4.3'), 
+                        html.Div('Scheduler App Version 5.4.3.1'), 
                         ], ), 
                 html.Div(
                     className="grid-item2",
@@ -914,6 +914,7 @@ app.layout = html.Div(
                                                 html.Div(id = 'export-button-status-text',
                                                          children = []),
                                                 html.A("Download Hourly.CSV", id="download-link", download="hourly.csv", href="", 
+                                                       disabled=True,
                                                        target="_blank"),
                                                 ], width = 10),
                                             dbc.Col([
@@ -2361,7 +2362,8 @@ def export_to_excel(n_clicks, all_data):
                      hourly_sched_df_wed, 
                      hourly_sched_df_thu, 
                      hourly_sched_df_fri, 
-                     hourly_sched_df_sat]).reset_index(drop = True)
+                     hourly_sched_df_sat], ignore_index=True)
+    
     # Generate the filename with the current timestamp
     #filename = f"sched_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
     
@@ -2381,6 +2383,19 @@ def update_download_link(data):
         raise PreventUpdate
 
     return f"data:text/csv;charset=utf-8,{data}"
+
+
+@app.callback(
+    Output("download-link", "disabled"),
+    Input(download_component, "data"),
+    prevent_initial_call=True,
+)
+def enable_download_link(data):
+    if not data:
+        return True  # Keep the link disabled if no data is available
+    else:
+        return False
+   # return no_update  # Maintain the current state if data is available
 
 
 if __name__ == "__main__":
