@@ -1673,29 +1673,29 @@ def generate_table(n_clicks, pdata, data1, data2):
         
         main_dict_results = all_data["Main"]
         
-        columns_to_remove = ['Allocated', 'To ALlocate',
-                             'Start at', 'Hour Break',
-                             'Phase'] 
+        #columns_to_remove = ['Allocated', 'To ALlocate',
+        #                     'Start at', 'Hour Break',
+        #                     'Phase'] 
         hourly_sched_df_sun = pd.DataFrame(main_dict_results["Sunday"])
-        hourly_sched_df_sun = hourly_sched_df_sun.drop(columns=columns_to_remove)
+        #hourly_sched_df_sun = hourly_sched_df_sun.drop(columns=columns_to_remove)
         
         hourly_sched_df_mon = pd.DataFrame(main_dict_results["Monday"])
-        hourly_sched_df_mon = hourly_sched_df_mon.drop(columns=columns_to_remove)
+        #hourly_sched_df_mon = hourly_sched_df_mon.drop(columns=columns_to_remove)
         
         hourly_sched_df_tue = pd.DataFrame(main_dict_results["Tuesday"])
-        hourly_sched_df_tue = hourly_sched_df_tue.drop(columns=columns_to_remove)
+        #hourly_sched_df_tue = hourly_sched_df_tue.drop(columns=columns_to_remove)
         
         hourly_sched_df_wed = pd.DataFrame(main_dict_results["Wednesday"])
-        hourly_sched_df_wed = hourly_sched_df_wed.drop(columns=columns_to_remove)
+        #hourly_sched_df_wed = hourly_sched_df_wed.drop(columns=columns_to_remove)
         
         hourly_sched_df_thu = pd.DataFrame(main_dict_results["Thursday"])
-        hourly_sched_df_thu = hourly_sched_df_thu.drop(columns=columns_to_remove)
+        #hourly_sched_df_thu = hourly_sched_df_thu.drop(columns=columns_to_remove)
         
         hourly_sched_df_fri  = pd.DataFrame(main_dict_results["Friday"])
-        hourly_sched_df_fri = hourly_sched_df_fri.drop(columns=columns_to_remove)
+        #hourly_sched_df_fri = hourly_sched_df_fri.drop(columns=columns_to_remove)
         
         hourly_sched_df_sat = pd.DataFrame(main_dict_results["Saturday"])
-        hourly_sched_df_sat = hourly_sched_df_sat.drop(columns=columns_to_remove)
+        #hourly_sched_df_sat = hourly_sched_df_sat.drop(columns=columns_to_remove)
         
         sun_df_dash =  html.Div([dash_table.DataTable(id = 'hourly_sched_df_sun_table', 
                                          columns = [{'name': i, 'id': i} \
@@ -2326,8 +2326,8 @@ def update_output_sales(contents, data, filename):
 
 @app.callback(
     [Output("download_component", "data"),
-     Output("download_component_daily", "data"),
-     Output("download_component_cdata", "data"),
+     #Output("download_component_daily", "data"),
+     #Output("download_component_cdata", "data"),
     Output("export-button-status-text", "children"),
     ],
     
@@ -2350,20 +2350,20 @@ def export_to_excel(n_clicks, export_state, gen_disabled, #h1_data, h2_data,
     #global dataframes_summary
     
     if gen_disabled:
-        return None, None,None, html.H5("Please upload files in 1. Input/Upload Data Tab.")
+        return None, html.H5("Please upload files in 1. Input/Upload Data Tab.")
 
     else:  
         if export_state:
-            return None, None, None, html.H5("Press Generate Schedule Button at 1. Input/Upload Data Tab.")
+            return None, html.H5("Press Generate Schedule Button at 1. Input/Upload Data Tab.")
         
         if export_state is False:
-            return None, None, None,html.H5("Results Ready to Export to Excel.")
+            return None, html.H5("Results Ready to Export to Excel.")
         
         else: 
             #headcount_per_hour1 = pd.DataFrame(h1_data)
             #headcount_per_hour2 = pd.DataFrame(h2_data)
-            weekly_sched_df = pd.DataFrame(w_data)
-            cashiers_reporting = pd.DataFrame(c_data)
+            #weekly_sched_df = pd.DataFrame(w_data)
+            #cashiers_reporting = pd.DataFrame(c_data)
             #weekly_sched_gen  = pd.DataFrame(w_data_gen)
             
             #dataframe_hourly_basis = all_data["Hourly Basis"]
@@ -2481,9 +2481,10 @@ def export_to_excel(n_clicks, export_state, gen_disabled, #h1_data, h2_data,
             #webbrowser.open(filename_path)            
             
             return dcc.send_data_frame(hc_summary.to_csv,"hourly_csv.csv"),\
-                dcc.send_data_frame(weekly_sched_df.to_csv, "daily_sched.csv"), \
-                dcc.send_data_frame(cashiers_reporting.to_csv,"cashiers_reporting.csv"), \
                 html.H5("Results Exported Successfully. Please save the file manually.")
+                #dcc.send_data_frame(weekly_sched_df.to_csv, "daily_sched.csv"), \
+                #dcc.send_data_frame(cashiers_reporting.to_csv,"cashiers_reporting.csv"), \
+                
 
 
 
