@@ -2325,8 +2325,7 @@ def update_output_sales(contents, data, filename):
 
 
 @app.callback(
-    [Output("export-button", "n_clicks"),
-     Output("download_component", "data"),
+    [Output("download_component", "data"),
      #Output("download_component_daily", "data"),
      #Output("download_component_cdata", "data"),
     Output("export-button-status-text", "children"),
@@ -2351,18 +2350,20 @@ def export_to_excel(n_clicks, export_state, gen_disabled, #h1_data, h2_data,
     #global dataframes_summary
     
     if gen_disabled:
-        return None, None, html.H5("Please upload files in 1. Input/Upload Data Tab.")
+        return None, html.H5("Please upload files in 1. Input/Upload Data Tab.")
 
     else:  
         if export_state:
-            return None, None, html.H5("Press Generate Schedule Button at 1. Input/Upload Data Tab.")
+            return None, html.H5("Press Generate Schedule Button at 1. Input/Upload Data Tab.")
         
         #elif export_state is False:
             #return None, None, html.H5("Results Ready to Export to Excel.")
+        elif n_clicks is None:
+            return None, html.H5("Results Ready to Export to Excel.")
         
         else: 
-            if n_clicks is None:
-                raise PreventUpdate
+            
+            
         
             #headcount_per_hour1 = pd.DataFrame(h1_data)
             #headcount_per_hour2 = pd.DataFrame(h2_data)
@@ -2405,7 +2406,7 @@ def export_to_excel(n_clicks, export_state, gen_disabled, #h1_data, h2_data,
             
                       
             
-            return None, dcc.send_data_frame(hc_summary.to_csv,"hourly_csv.csv"),\
+            return dcc.send_data_frame(hc_summary.to_csv,"hourly_csv.csv"),\
                 html.H5("Results Exported Successfully. Please save the file manually.")
                 #dcc.send_data_frame(weekly_sched_df.to_csv, "daily_sched.csv"), \
                 #dcc.send_data_frame(cashiers_reporting.to_csv,"cashiers_reporting.csv"), \
