@@ -146,9 +146,9 @@ day_off_matrix = {
 
 day_off_matrix_df = pd.DataFrame(day_off_matrix)
 day_off_matrix_df.set_index('Dayoff', inplace =True)
-download_component = dcc.Download()
-download_component_daily = dcc.Download()
-download_component_cdata = dcc.Download()
+download_component = dcc.Download(id="download_component")
+download_component_daily = dcc.Download(id = "download_component_daily")
+download_component_cdata = dcc.Download(id = "download_component_cdata")
 # -------------------------------------------------
 
 style_data_conditional = [
@@ -2328,6 +2328,7 @@ def update_output_sales(contents, data, filename):
     [Output("download_component", "data")],
     [Input("export-button", "n_clicks")],
     [State('all-data', 'data')],
+    prevent_initial_call=True,
 )
 def export_to_excel(n_clicks,all_data):
     #global dataframes
@@ -2368,8 +2369,9 @@ def export_to_excel(n_clicks,all_data):
                                 #hourly_sched_df_sat]).reset_index(drop = True)
         
                   
-        
-    return dcc.send_data_frame(hourly_sched_df_sun.to_csv,"hourly_csv.csv")#,\
+    #dcc.send_data_frame(df.to_excel, "mydf.xlsx", sheet_name="Sheet_name_1")    
+    return dcc.send_data_frame(hourly_sched_df_sun.to_excel,
+                               "hourly.xlsx", sheet_name = "Hourly")#,\
         #html.H5("Results Exported Successfully. Please save the file manually.")
             
 
