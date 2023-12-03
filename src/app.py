@@ -2334,7 +2334,7 @@ def update_output_sales(contents, data, filename):
 )
 def export_to_excel(n_clicks, sun_data):
     dff = pd.DataFrame(sun_data)
-    sun_data["Day"] = "Sunday"
+    dff["Day"] = "Sunday"
     
     #dff = pd.concat([hourly_sched_df_sun, 
                      #hourly_sched_df_mon, 
@@ -2350,7 +2350,7 @@ def export_to_excel(n_clicks, sun_data):
     #filename = f"sched_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
     
     # Specify the filename in the to_csv method
-    csv_string = hourly_sched_df_sun.to_csv(index=False, encoding="utf-8")
+    csv_string = dff.to_csv(index=False, encoding="utf-8")
     
     return csv_string, html.H3("Click on Download Link")
 
