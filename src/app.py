@@ -914,6 +914,7 @@ app.layout = html.Div(
                                                 html.Div(id = 'export-button-status-text',
                                                          children = []),
                                                 html.A("Download Hourly.csv", id="download-link", download="hourly.csv", href="",
+                                                       style={'display': 'none', 'fontSize': 16, 'fontWeight': 'bold', 'pointerEvents': 'none', 'color': 'gray'},
                                                        target="_blank"),
                                                 ], width = 10),
                                             dbc.Col([
@@ -2289,7 +2290,8 @@ def update_output_sales(contents, data, filename):
 
 @app.callback(
     [Output("download_component", "data"),
-     Output("export-button-status-text", "children")],
+     Output("export-button-status-text", "children"),
+     Output("download-link", "style")],
     [Input("export-button", "n_clicks")],
     [State('hourly_sched_df_sun_table', 'derived_virtual_data'),
      State('hourly_sched_df_mon_table', 'derived_virtual_data'),
@@ -2303,27 +2305,38 @@ def update_output_sales(contents, data, filename):
 def export_to_excel(n_clicks, sun_data, mon_data, tue_data,
                     wed_data, thu_data, fri_data, sat_data):
     
+    reorder_col = ["Day","Personnel Name","Employment Type","Sched",
+                       "8.00-9.00","9.00-10.00","10.00-11.00","11.00-12.00",
+                       "12.00-13.00","13.00-14.00", "14.00-15.00","15.00-16.00",
+                       "16.00-17.00","17.00-18.00","18.00-19.00","19.00-20.00",
+                       "20.00-21.00","21.00-22.00"]
     sun_dff = pd.DataFrame(sun_data)
     sun_dff["Day"] = "Sun"
+    sun_dff = sun_dff[reorder_col]
     
     mon_dff = pd.DataFrame(mon_data)
     mon_dff["Day"] = "Mon"
+    mon_dff = mon_dff[reorder_col]
     
     tue_dff = pd.DataFrame(tue_data)
     tue_dff["Day"] = "Tue"
+    tue_dff = tue_dff[reorder_col]
     
     wed_dff = pd.DataFrame(wed_data)
     wed_dff["Day"] = "Wed"
+    wed_dff = wed_dff[reorder_col]
     
     thu_dff = pd.DataFrame(thu_data)
     thu_dff["Day"] = "Thu"
+    thu_dff = thu_dff[reorder_col]
     
     fri_dff = pd.DataFrame(fri_data)
     fri_dff["Day"] = "Fri"
+    fri_dff = fri_dff[reorder_col]
     
     sat_dff = pd.DataFrame(sat_data)
     sat_dff["Day"] = "Sat"
-    
+    sat_dff = sat_dff[reorder_col]
     
     dff = pd.concat([sun_dff,
                      mon_dff,
@@ -2335,7 +2348,9 @@ def export_to_excel(n_clicks, sun_data, mon_data, tue_data,
     # Specify the filename in the to_csv method
     csv_string = dff.to_csv(index=False, encoding="utf-8")
     
-    return csv_string, html.H3("Click on Download Link")
+    return csv_string, html.H3("Click on Download Link"), \
+        {'display': 'block', 'fontSize': 16, 'fontWeight': 'bold',
+         'pointerEvents': 'auto', 'color': 'black'}
 
 
 @app.callback(
