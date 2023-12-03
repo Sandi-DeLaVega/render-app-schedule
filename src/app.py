@@ -915,8 +915,8 @@ app.layout = html.Div(
                                                     children = [html.Button("Prepare to Export", id="export-button", 
                                                                             className = "button_download"),]),
                                                 download_component,
-                                                #download_component_daily,
-                                                #download_component_cdata,
+                                                download_component_daily,
+                                                download_component_cdata,
                                                 ], width = 2),
                                             
                                             dbc.Col([
@@ -928,6 +928,19 @@ app.layout = html.Div(
                                                        download="hourly.csv", href="",
                                                        style={'display': 'none'},
                                                        target="_blank"),
+                                                
+                                                html.A("Download Weekly Sched.csv", 
+                                                       id="download-link-daily", 
+                                                       download="weeklysched.csv", href="",
+                                                       style={'display': 'none'},
+                                                       target="_blank"),
+                                                
+                                                html.A("Download Summary Report.csv", 
+                                                       id="download-link-cdata", 
+                                                       download="cashier_reporting.csv", href="",
+                                                       style={'display': 'none'},
+                                                       target="_blank"),
+                                                
                                                 ], width = 10),
                                             
                                             
@@ -2301,7 +2314,7 @@ def update_output_sales(contents, data, filename):
     [State('all-data', 'data')],
     prevent_initial_call=True,
 )
-def export_to_excel(n_clicks, all_data):
+def export_hourly_csv(n_clicks, all_data):
     
     main_dict_results = all_data["Main"]
     sun_data = main_dict_results["Sunday"]
@@ -2334,7 +2347,7 @@ def export_to_excel(n_clicks, all_data):
     dff = pd.concat(dataframes_reordered)
     
     # Generate the filename with the current timestamp
-    filename = f"sched_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
+    filename = f"hourly_sched_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
     
     
     # Specify the filename in the to_csv method
@@ -2342,6 +2355,56 @@ def export_to_excel(n_clicks, all_data):
     
     return csv_string, html.H3("Click on Download Link"), \
         {'display': 'block', 'fontSize': 16, 'fontWeight': 'bold'}, filename
+
+
+
+@app.callback(
+    [Output("download_component_daily", "data"),
+     Output("download-link-daily", "style"),
+     Output("download-link-daily", "download")],
+    [Input("export-button", "n_clicks")],
+    [State('weekly-sched-df-data', 'data')],
+    prevent_initial_call=True,
+)
+def export_weekly_csv(n_clicks, w_data):
+    
+    dff = pd.DataFrame(w_data)
+    
+    # Generate the filename with the current timestamp
+    filename = f"weekly_sched_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv" 
+    
+    # Specify the filename in the to_csv method
+    csv_string = dff.to_csv(index=False, encoding="utf-8")
+    
+    return csv_string, \
+        {'display': 'block', 'fontSize': 16, 'fontWeight': 'bold'}, filename
+
+
+
+
+@app.callback(
+    [Output("download_component_cdata", "data"),
+     Output("download-link-cdata", "style"),
+     Output("download-link-cdata", "download")],
+    [Input("export-button", "n_clicks")],
+    [ State('cashier-reporting-data', 'data')],
+    prevent_initial_call=True,
+)
+def export_cashier_report_csv(n_clicks, c_data):
+    
+    dff = pd.DataFrame(c_data)
+    
+    # Generate the filename with the current timestamp
+    filename = f"summary_report_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv" 
+    
+    # Specify the filename in the to_csv method
+    csv_string = dff.to_csv(index=False, encoding="utf-8")
+    
+    return csv_string, \
+        {'display': 'block', 'fontSize': 16, 'fontWeight': 'bold'}, filename
+
+
+
 
 
 @app.callback(
@@ -2354,6 +2417,35 @@ def update_download_link(data):
         raise PreventUpdate
 
     return f"data:text/csv;charset=utf-8,{data}"
+
+
+
+@app.callback(
+    Output("download-link-daily", "href"),
+    Input(download_component_daily, "data"),
+    prevent_initial_call=True,
+)
+def update_download_link_daily(data):
+    if not data:
+        raise PreventUpdate
+
+    return f"data:text/csv;charset=utf-8,{data}"
+
+
+
+
+@app.callback(
+    Output("download-link-cdata", "href"),
+    Input(download_component_cdata, "data"),
+    prevent_initial_call=True,
+)
+def update_download_link_cdata(data):
+    if not data:
+        raise PreventUpdate
+
+    return f"data:text/csv;charset=utf-8,{data}"
+
+
 
 
 if __name__ == "__main__":
