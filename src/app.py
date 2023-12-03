@@ -2297,17 +2297,19 @@ def update_output_sales(contents, data, filename):
      Output("export-button-status-text", "children"),
      Output("download-link", "style")],
     [Input("export-button", "n_clicks")],
-    [State('hourly_sched_df_sun_table', 'derived_virtual_data'),
-     State('hourly_sched_df_mon_table', 'derived_virtual_data'),
-     State('hourly_sched_df_tue_table', 'derived_virtual_data'),
-     State('hourly_sched_df_wed_table', 'derived_virtual_data'),
-     State('hourly_sched_df_thu_table', 'derived_virtual_data'),
-     State('hourly_sched_df_fri_table', 'derived_virtual_data'),
-     State('hourly_sched_df_sat_table', 'derived_virtual_data')],
+    [State('all-data', 'data')],
     prevent_initial_call=True,
 )
-def export_to_excel(n_clicks, sun_data, mon_data, tue_data,
-                    wed_data, thu_data, fri_data, sat_data):
+def export_to_excel(n_clicks, all_data):
+    
+    main_dict_results = all_data["Main"]
+    sun_data = main_dict_results["Sunday"]
+    mon_data = main_dict_results["Monday"]
+    tue_data = main_dict_results["Tuesday"]
+    wed_data = main_dict_results["Wednesday"]
+    thu_data = main_dict_results["Thursday"]
+    fri_data = main_dict_results["Friday"]
+    sat_data = main_dict_results["Saturday"]
     
     reorder_col = ["Day","Personnel Name","Employment Type","Sched",
                        "8.00-9.00","9.00-10.00","10.00-11.00","11.00-12.00",
@@ -2327,42 +2329,7 @@ def export_to_excel(n_clicks, sun_data, mon_data, tue_data,
         
     # Concatenate all DataFrames
     dff = pd.concat(dataframes)
-    """
-    sun_dff = pd.DataFrame(sun_data)
-    sun_dff["Day"] = "Sun"
-    sun_dff = sun_dff.reindex(columns=[reorder_col])
     
-    mon_dff = pd.DataFrame(mon_data)
-    mon_dff["Day"] = "Mon"
-    mon_dff = mon_dff.reindex(columns=[reorder_col])
-    
-    tue_dff = pd.DataFrame(tue_data)
-    tue_dff["Day"] = "Tue"
-    tue_dff = tue_dff.reindex(columns=[reorder_col])
-    
-    wed_dff = pd.DataFrame(wed_data)
-    wed_dff["Day"] = "Wed"
-    wed_dff = wed_dff.reindex(columns=[reorder_col])
-    
-    thu_dff = pd.DataFrame(thu_data)
-    thu_dff["Day"] = "Thu"
-    thu_dff = thu_dff.reindex(columns=[reorder_col])
-    
-    fri_dff = pd.DataFrame(fri_data)
-    fri_dff["Day"] = "Fri"
-    fri_dff = fri_dff.reindex(columns=[reorder_col])
-    
-    sat_dff = pd.DataFrame(sat_data)
-    sat_dff["Day"] = "Sat"
-    sat_dff = sat_dff.reindex(columns=[reorder_col])
-    
-    dff = pd.concat([sun_dff,
-                     mon_dff,
-                     tue_dff,
-                     wed_dff, thu_dff,
-                     fri_dff, sat_dff])
-    
-    """
     # Specify the filename in the to_csv method
     csv_string = dff.to_csv(index=False, encoding="utf-8")
     
