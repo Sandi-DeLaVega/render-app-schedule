@@ -245,7 +245,7 @@ app.layout = html.Div(
                 html.Div(
                     className="item1",
                     children=[
-                        html.Div('Scheduler App Version 5.4'), 
+                        html.Div('Scheduler App Version 5.4.1'), 
                         ], ), 
                 html.Div(
                     className="grid-item2",
@@ -913,7 +913,7 @@ app.layout = html.Div(
                                                 
                                                 html.Div(id = 'export-button-status-text',
                                                          children = []),
-                                                
+                                                html.A("Download Link", id="download-link", download="hourly.csv", href="", target="_blank"),
                                                 ], width = 10),
                                             dbc.Col([
                                                 html.Div(
@@ -953,7 +953,7 @@ app.layout = html.Div(
                 html.Div(
                     className="item2",
                     children=[
-                        html.Div('Updated as of Dec 2, 2023'), 
+                        html.Div('Updated as of Dec 3, 2023'), 
                         ], ), 
                 html.Div(
                     className="grid-item2",
@@ -2325,56 +2325,35 @@ def update_output_sales(contents, data, filename):
 
 
 @app.callback(
-    [Output("download_component", "data")],
+    [Output("download_component", "data"),
+     Output("export-button-status-text", "children")],
     [Input("export-button", "n_clicks")],
-    [State('all-data', 'data')],
+    [State("hourly_sched_df_sun_table", "derived_virtual_data")],
     prevent_initial_call=True,
 )
-def export_to_excel(n_clicks,all_data):
+def export_to_excel(n_clicks, sun_data):
     #global dataframes
     #global dataframes_summary
     
     #if gen_disabled:
         #return None, html.H5("Please upload files in 1. Input/Upload Data Tab.")
 
-    
-    main_dict_results = all_data["Main"]
-    hourly_sched_df_sun = pd.DataFrame(main_dict_results["Sunday"])
-    hourly_sched_df_sun["Day"] = "Sun"
-    
-    hourly_sched_df_mon = pd.DataFrame(main_dict_results["Monday"])
-    hourly_sched_df_mon["Day"] = "Mon"
-    
-    hourly_sched_df_tue = pd.DataFrame(main_dict_results["Tuesday"])
-    hourly_sched_df_tue["Day"] = "Tue"
-    
-    hourly_sched_df_wed = pd.DataFrame(main_dict_results["Wednesday"])
-    hourly_sched_df_wed["Day"] = "Wed"
-    
-    hourly_sched_df_thu = pd.DataFrame(main_dict_results["Thursday"])
-    hourly_sched_df_thu["Day"] = "Thu"
-    
-    hourly_sched_df_fri  = pd.DataFrame(main_dict_results["Friday"])
-    hourly_sched_df_fri["Day"] = "Fri"
-    
-    hourly_sched_df_sat = pd.DataFrame(main_dict_results["Saturday"])
-    hourly_sched_df_sat["Day"] = "Sat"
-        
-        #hc_summary = pd.concat([hourly_sched_df_sun,
-                                #hourly_sched_df_mon,
-                                #hourly_sched_df_tue,
-                                #hourly_sched_df_wed,
-                                #hourly_sched_df_thu,
-                                #hourly_sched_df_fri,
-                                #hourly_sched_df_sat]).reset_index(drop = True)
-        
+    dff = pd.DataFrame(sun_data)
+    csv_string = dff.to_csv(index=False, encoding="utf-8")
                   
-    #dcc.send_data_frame(df.to_excel, "mydf.xlsx", sheet_name="Sheet_name_1")    
-    return dcc.send_data_frame(hourly_sched_df_sun.to_excel,
-                               "hourly.xlsx", sheet_name = "Hourly")#,\
-        #html.H5("Results Exported Successfully. Please save the file manually.")
+    return csv_string, "Download complete!"
             
 
+@app.callback(
+    Output("download-link", "href"),
+    Input(download_component, "data"),
+    prevent_initial_call=True,
+)
+def update_download_link(data):
+    if not data:
+        raise PreventUpdate
+
+    return f"data:text/csv;charset=utf-8,{data}"
 
 
 if __name__ == "__main__":
