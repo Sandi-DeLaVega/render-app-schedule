@@ -2381,7 +2381,7 @@ def export_to_excel(n_clicks, export_state, gen_disabled, #h1_data, h2_data,
                                 hourly_sched_df_wed,
                                 hourly_sched_df_thu,
                                 hourly_sched_df_fri,
-                                hourly_sched_df_sat])
+                                hourly_sched_df_sat]).reset_index(drop = True)
         
                   
         
@@ -2394,5 +2394,5 @@ def export_to_excel(n_clicks, export_state, gen_disabled, #h1_data, h2_data,
 
 
 if __name__ == "__main__":
-    app.run_server(debug = False)
+    app.run_server(debug = True)
     
