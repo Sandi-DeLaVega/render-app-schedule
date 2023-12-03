@@ -923,7 +923,10 @@ app.layout = html.Div(
                                                 
                                                 html.Div(id = 'export-button-status-text',
                                                          children = []),
-                                                html.A("Download Hourly.csv", id="download-link", download="hourly.csv", href="",
+                                                html.A("Download Hourly.csv", 
+                                                       id="download-link", 
+                                                       download="hourly.csv", href="",
+                                                       style={'display': 'none'},
                                                        target="_blank"),
                                                 ], width = 10),
                                             
@@ -2291,7 +2294,8 @@ def update_output_sales(contents, data, filename):
 
 @app.callback(
     [Output("download_component", "data"),
-     Output("export-button-status-text", "children")],
+     Output("export-button-status-text", "children"),
+     Output("download-link", "style")],
     [Input("export-button", "n_clicks")],
     [State('hourly_sched_df_sun_table', 'derived_virtual_data'),
      State('hourly_sched_df_mon_table', 'derived_virtual_data'),
@@ -2312,7 +2316,18 @@ def export_to_excel(n_clicks, sun_data, mon_data, tue_data,
                        "20.00-21.00","21.00-22.00"]
     
     #reordered_columns = [{'name': col, 'id': col} for col in desired_order]
-    
+    days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    dataframes = [pd.DataFrame(day_data) if day_data else pd.DataFrame(columns=reorder_col) \
+                  for day_data in [sun_data, mon_data, tue_data, wed_data, thu_data, fri_data, sat_data]]
+
+     # Add "Day" column and reorder columns
+    for day, df in zip(days, dataframes):
+        df["Day"] = day
+        df = df[reorder_col]
+        
+    # Concatenate all DataFrames
+    dff = pd.concat(dataframes)
+    """
     sun_dff = pd.DataFrame(sun_data)
     sun_dff["Day"] = "Sun"
     sun_dff = sun_dff.reindex(columns=[reorder_col])
@@ -2347,11 +2362,11 @@ def export_to_excel(n_clicks, sun_data, mon_data, tue_data,
                      wed_dff, thu_dff,
                      fri_dff, sat_dff])
     
-    
+    """
     # Specify the filename in the to_csv method
     csv_string = dff.to_csv(index=False, encoding="utf-8")
     
-    return csv_string, html.H3("Click on Download Link")
+    return csv_string, html.H3("Click on Download Link"), {'display': 'block'}
 
 
 @app.callback(
