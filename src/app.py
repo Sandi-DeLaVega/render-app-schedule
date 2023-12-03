@@ -919,7 +919,7 @@ app.layout = html.Div(
                                             dbc.Col([
                                                 html.Div(
                                                     className = "button_download_div",
-                                                    children = [html.Button("Export to Excel", id="export-button", 
+                                                    children = [html.Button("Download Results", id="export-button", 
                                                                             className = "button_download"),]),
                                                 #download_component,
                                                 #download_component_daily,
@@ -2328,7 +2328,6 @@ def update_output_sales(contents, data, filename):
 @app.callback(
     [Output("download_component", "data"),
      Output("export-button-status-text", "children"),
-     Output("download-link", "style"),
      Output("download-link", "download")],
     [Input("export-button", "n_clicks")],
     [State('all-data', 'data')],
@@ -2371,11 +2370,21 @@ def export_to_excel(n_clicks, all_data):
     # Specify the filename in the to_csv method
     csv_string = dff.to_csv(index=False, encoding="utf-8", path_or_buf=filename)
     
-    return csv_string, html.H3("Click on Download Link"), \
-        {'display': 'block', 'fontSize': 16, 'fontWeight': 'bold'}, filename
+    return csv_string, html.H3("Click on Download Link"), filename
             
 
-"""
+@app.callback(
+    Output("download-link", "style"),
+    Input(download_component, "data"),
+    prevent_initial_call=True,
+)
+def show_download_link(data):
+    if not data:
+        raise PreventUpdate
+
+    return {'display': 'block', 'fontSize': 16, 'fontWeight': 'bold'}
+
+
 @app.callback(
     Output("download-link", "href"),
     Input(download_component, "data"),
@@ -2386,7 +2395,7 @@ def update_download_link(data):
         raise PreventUpdate
 
     return f"data:text/csv;charset=utf-8,{data}"
-"""
+
 
 if __name__ == "__main__":
     app.run_server(debug = False)
