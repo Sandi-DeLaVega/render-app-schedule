@@ -913,7 +913,7 @@ app.layout = html.Div(
                                                 
                                                 html.Div(id = 'export-button-status-text',
                                                          children = []),
-                                                html.A("Download Link", id="download-link", download="", href="", 
+                                                html.A("Download Link", id="download-link", download="hourly.csv", href="", 
                                                        target="_blank", style={'display': 'none', 'fontSize': 16, 'fontWeight': 'bold'}),
                                                 ], width = 10),
                                             dbc.Col([
@@ -2327,8 +2327,7 @@ def update_output_sales(contents, data, filename):
 
 @app.callback(
     [Output("download_component", "data"),
-     Output("export-button-status-text", "children"),
-     Output("download-link", "download")],
+     Output("export-button-status-text", "children")],
     [Input("export-button", "n_clicks")],
     [State('all-data', 'data')],
     prevent_initial_call=True,
@@ -2347,7 +2346,6 @@ def export_to_excel(n_clicks, all_data):
     hourly_sched_df_wed = pd.DataFrame(main_dict_results["Wednesday"])
     hourly_sched_df_wed["Day"] = "Wednesday"
     
-    
     hourly_sched_df_thu = pd.DataFrame(main_dict_results["Thursday"])
     hourly_sched_df_thu["Day"] = "Thursday"
     
@@ -2365,12 +2363,12 @@ def export_to_excel(n_clicks, all_data):
                      hourly_sched_df_fri, 
                      hourly_sched_df_sat]).reset_index(drop = True)
     # Generate the filename with the current timestamp
-    filename = f"sched_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
+    #filename = f"sched_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
     
     # Specify the filename in the to_csv method
     csv_string = dff.to_csv(index=False, encoding="utf-8")
     
-    return csv_string, html.H3("Click on Download Link"), filename
+    return csv_string, html.H3("Click on Download Link")#, filename
             
 
 @app.callback(
@@ -2381,8 +2379,8 @@ def export_to_excel(n_clicks, all_data):
 def show_download_link(data):
     if not data:
         raise PreventUpdate
-
     return {'display': 'block', 'fontSize': 16, 'fontWeight': 'bold'}
+
 
 
 @app.callback(
