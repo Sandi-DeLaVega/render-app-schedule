@@ -2295,7 +2295,8 @@ def update_output_sales(contents, data, filename):
 @app.callback(
     [Output("download_component", "data"),
      Output("export-button-status-text", "children"),
-     Output("download-link", "style")],
+     Output("download-link", "style"),
+     Output("download-link", "download")],
     [Input("export-button", "n_clicks")],
     [State('all-data', 'data')],
     prevent_initial_call=True,
@@ -2332,10 +2333,15 @@ def export_to_excel(n_clicks, all_data):
     # Concatenate all DataFrames
     dff = pd.concat(dataframes_reordered)
     
+    # Generate the filename with the current timestamp
+    filename = f"sched_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
+    
+    
     # Specify the filename in the to_csv method
     csv_string = dff.to_csv(index=False, encoding="utf-8")
     
-    return csv_string, html.H3("Click on Download Link"), {'display': 'block'}
+    return csv_string, html.H3("Click on Download Link"), \
+        {'display': 'block', 'fontSize': 16, 'fontWeight': 'bold'}, filename
 
 
 @app.callback(
