@@ -910,13 +910,6 @@ app.layout = html.Div(
                                     dbc.Col([
                                         dbc.Row([
                                             dbc.Col([
-                                                
-                                                html.Div(id = 'export-button-status-text',
-                                                         children = []),
-                                                html.A("Download Hourly.csv", id="download-link", download="hourly.csv", href="",
-                                                       target="_blank"),
-                                                ], width = 10),
-                                            dbc.Col([
                                                 html.Div(
                                                     className = "button_download_div",
                                                     children = [html.Button("Prepare to Export", id="export-button", 
@@ -925,6 +918,15 @@ app.layout = html.Div(
                                                 #download_component_daily,
                                                 #download_component_cdata,
                                                 ], width = 2),
+                                            
+                                            dbc.Col([
+                                                
+                                                html.Div(id = 'export-button-status-text',
+                                                         children = []),
+                                                html.A("Download Hourly.csv", id="download-link", download="hourly.csv", href="",
+                                                       target="_blank"),
+                                                ], width = 10),
+                                            
                                             
                                             
                                             ])    
