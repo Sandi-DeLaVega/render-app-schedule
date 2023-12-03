@@ -913,14 +913,13 @@ app.layout = html.Div(
                                                 
                                                 html.Div(id = 'export-button-status-text',
                                                          children = []),
-                                                html.A("Download Hourly.CSV", id="download-link", download="hourly.csv", href="", 
-                                                       disabled=True,
+                                                html.A("Download Hourly.csv", id="download-link", download="hourly.csv", href="",
                                                        target="_blank"),
                                                 ], width = 10),
                                             dbc.Col([
                                                 html.Div(
                                                     className = "button_download_div",
-                                                    children = [html.Button("Download Results", id="export-button", 
+                                                    children = [html.Button("Prepare to Export", id="export-button", 
                                                                             className = "button_download"),]),
                                                 #download_component,
                                                 #download_component_daily,
@@ -2383,19 +2382,6 @@ def update_download_link(data):
         raise PreventUpdate
 
     return f"data:text/csv;charset=utf-8,{data}"
-
-
-@app.callback(
-    Output("download-link", "disabled"),
-    Input(download_component, "data"),
-    prevent_initial_call=True,
-)
-def enable_download_link(data):
-    if not data:
-        return True  # Keep the link disabled if no data is available
-    else:
-        return False
-   # return no_update  # Maintain the current state if data is available
 
 
 if __name__ == "__main__":
