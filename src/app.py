@@ -2369,9 +2369,15 @@ def export_hourly_csv(n_clicks, all_data):
 def export_weekly_csv(n_clicks, w_data):
     
     dff = pd.DataFrame(w_data)
-    dff = dff["Personnel Name", "Employment Type",
+    
+    try:
+        dff = dff[["Personnel Name", "Employment Type",
               "Day Off", "Sunday", "Monday", "Tuesday",
-              "Wednesday", "Thursday", "Friday", "Saturday"]
+              "Wednesday", "Thursday", "Friday", "Saturday"]]
+        
+    except KeyError:
+        pass
+    
     # Generate the filename with the current timestamp
     filename = f"weekly_sched_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv" 
     
