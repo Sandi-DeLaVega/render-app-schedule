@@ -2329,31 +2329,12 @@ def update_output_sales(contents, data, filename):
     [Output("download_component", "data"),
      Output("export-button-status-text", "children")],
     [Input("export-button", "n_clicks")],
-    [State('all-data', 'data')],
+    [State('hourly_sched_df_sun_table', 'derived_virtual_data')],
     prevent_initial_call=True,
 )
-def export_to_excel(n_clicks, all_data):
-    main_dict_results = all_data["Main"]
-    hourly_sched_df_sun = pd.DataFrame(main_dict_results["Sunday"])
-    hourly_sched_df_sun["Day"] = "Sunday"
-    
-    hourly_sched_df_mon = pd.DataFrame(main_dict_results["Monday"])
-    hourly_sched_df_mon["Day"] = "Monday"
-    
-    hourly_sched_df_tue = pd.DataFrame(main_dict_results["Tuesday"])
-    hourly_sched_df_tue["Day"] = "Tuesday"
-    
-    hourly_sched_df_wed = pd.DataFrame(main_dict_results["Wednesday"])
-    hourly_sched_df_wed["Day"] = "Wednesday"
-    
-    hourly_sched_df_thu = pd.DataFrame(main_dict_results["Thursday"])
-    hourly_sched_df_thu["Day"] = "Thursday"
-    
-    hourly_sched_df_fri  = pd.DataFrame(main_dict_results["Friday"])
-    hourly_sched_df_fri["Day"] = "Friday"
-    
-    hourly_sched_df_sat = pd.DataFrame(main_dict_results["Saturday"])
-    hourly_sched_df_sat["Day"] = "Saturday"
+def export_to_excel(n_clicks, sun_data):
+    dff = pd.DataFrame(sun_data)
+    sun_data["Day"] = "Sunday"
     
     #dff = pd.concat([hourly_sched_df_sun, 
                      #hourly_sched_df_mon, 
