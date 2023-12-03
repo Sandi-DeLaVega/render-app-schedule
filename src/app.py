@@ -2355,21 +2355,21 @@ def export_to_excel(n_clicks, all_data):
     hourly_sched_df_sat = pd.DataFrame(main_dict_results["Saturday"])
     hourly_sched_df_sat["Day"] = "Saturday"
     
-    dff = pd.concat([hourly_sched_df_sun, 
-                     hourly_sched_df_mon, 
-                     hourly_sched_df_tue, 
-                     hourly_sched_df_wed, 
-                     hourly_sched_df_thu, 
-                     hourly_sched_df_fri, 
-                     hourly_sched_df_sat], 
-                    axis = 1,
-                    ignore_index=True)
+    #dff = pd.concat([hourly_sched_df_sun, 
+                     #hourly_sched_df_mon, 
+                     #hourly_sched_df_tue, 
+                     ##hourly_sched_df_wed, 
+                     #hourly_sched_df_thu, 
+                     #hourly_sched_df_fri, 
+                     #hourly_sched_df_sat], 
+                    #axis = 1,
+                    #ignore_index=True)
     
     # Generate the filename with the current timestamp
     #filename = f"sched_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
     
     # Specify the filename in the to_csv method
-    csv_string = dff.to_csv(index=False, encoding="utf-8")
+    csv_string = hourly_sched_df_sun.to_csv(index=False, encoding="utf-8")
     
     return csv_string, html.H3("Click on Download Link")
 
