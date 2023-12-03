@@ -2325,71 +2325,53 @@ def update_output_sales(contents, data, filename):
 
 
 @app.callback(
-    [Output("download_component", "data"),
-     #Output("download_component_daily", "data"),
-     #Output("download_component_cdata", "data"),
-    Output("export-button-status-text", "children"),
-    ],
-    
-    [Input("export-button", "n_clicks"),
-     Input('export-button', 'disabled'),],
-    
-    [State('generate--model-button','disabled'),
-     State('cashier-reporting-data', 'data'),
-     State('weekly-sched-df-data', 'data'),
-     State('all-data', 'data'),
-     ],
-    prevent_initial_call=True,
+    [Output("download_component", "data")],
+    [Input("export-button", "n_clicks")],
+    [State('all-data', 'data')],
 )
-def export_to_excel(n_clicks, export_state, gen_disabled, #h1_data, h2_data, 
-                    c_data, 
-                    w_data,
-                    #w_data_gen, 
-                    all_data):
+def export_to_excel(n_clicks,all_data):
     #global dataframes
     #global dataframes_summary
     
-    if gen_disabled:
-        return None, html.H5("Please upload files in 1. Input/Upload Data Tab.")
+    #if gen_disabled:
+        #return None, html.H5("Please upload files in 1. Input/Upload Data Tab.")
 
-    else:  
-        main_dict_results = all_data["Main"]
-        hourly_sched_df_sun = pd.DataFrame(main_dict_results["Sunday"])
-        hourly_sched_df_sun["Day"] = "Sun"
+    
+    main_dict_results = all_data["Main"]
+    hourly_sched_df_sun = pd.DataFrame(main_dict_results["Sunday"])
+    hourly_sched_df_sun["Day"] = "Sun"
+    
+    hourly_sched_df_mon = pd.DataFrame(main_dict_results["Monday"])
+    hourly_sched_df_mon["Day"] = "Mon"
+    
+    hourly_sched_df_tue = pd.DataFrame(main_dict_results["Tuesday"])
+    hourly_sched_df_tue["Day"] = "Tue"
+    
+    hourly_sched_df_wed = pd.DataFrame(main_dict_results["Wednesday"])
+    hourly_sched_df_wed["Day"] = "Wed"
+    
+    hourly_sched_df_thu = pd.DataFrame(main_dict_results["Thursday"])
+    hourly_sched_df_thu["Day"] = "Thu"
+    
+    hourly_sched_df_fri  = pd.DataFrame(main_dict_results["Friday"])
+    hourly_sched_df_fri["Day"] = "Fri"
+    
+    hourly_sched_df_sat = pd.DataFrame(main_dict_results["Saturday"])
+    hourly_sched_df_sat["Day"] = "Sat"
         
-        hourly_sched_df_mon = pd.DataFrame(main_dict_results["Monday"])
-        hourly_sched_df_mon["Day"] = "Mon"
-        
-        hourly_sched_df_tue = pd.DataFrame(main_dict_results["Tuesday"])
-        hourly_sched_df_tue["Day"] = "Tue"
-        
-        hourly_sched_df_wed = pd.DataFrame(main_dict_results["Wednesday"])
-        hourly_sched_df_wed["Day"] = "Wed"
-        
-        hourly_sched_df_thu = pd.DataFrame(main_dict_results["Thursday"])
-        hourly_sched_df_thu["Day"] = "Thu"
-        
-        hourly_sched_df_fri  = pd.DataFrame(main_dict_results["Friday"])
-        hourly_sched_df_fri["Day"] = "Fri"
-        
-        hourly_sched_df_sat = pd.DataFrame(main_dict_results["Saturday"])
-        hourly_sched_df_sat["Day"] = "Sat"
-        
-        hc_summary = pd.concat([hourly_sched_df_sun,
-                                hourly_sched_df_mon,
-                                hourly_sched_df_tue,
-                                hourly_sched_df_wed,
-                                hourly_sched_df_thu,
-                                hourly_sched_df_fri,
-                                hourly_sched_df_sat]).reset_index(drop = True)
+        #hc_summary = pd.concat([hourly_sched_df_sun,
+                                #hourly_sched_df_mon,
+                                #hourly_sched_df_tue,
+                                #hourly_sched_df_wed,
+                                #hourly_sched_df_thu,
+                                #hourly_sched_df_fri,
+                                #hourly_sched_df_sat]).reset_index(drop = True)
         
                   
         
-        return dcc.send_data_frame(hc_summary.to_csv,"hourly_csv.csv"),\
-            html.H5("Results Exported Successfully. Please save the file manually.")
-            #dcc.send_data_frame(weekly_sched_df.to_csv, "daily_sched.csv"), \
-            #dcc.send_data_frame(cashiers_reporting.to_csv,"cashiers_reporting.csv"), \
-                
+    return dcc.send_data_frame(hourly_sched_df_sun.to_csv,"hourly_csv.csv")#,\
+        #html.H5("Results Exported Successfully. Please save the file manually.")
+            
 
 
 
