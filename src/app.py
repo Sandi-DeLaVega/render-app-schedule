@@ -2361,7 +2361,9 @@ def export_to_excel(n_clicks, all_data):
                      hourly_sched_df_wed, 
                      hourly_sched_df_thu, 
                      hourly_sched_df_fri, 
-                     hourly_sched_df_sat], ignore_index=True)
+                     hourly_sched_df_sat], 
+                    axis = 1,
+                    ignore_index=True)
     
     # Generate the filename with the current timestamp
     #filename = f"sched_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
