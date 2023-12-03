@@ -245,7 +245,7 @@ app.layout = html.Div(
                 html.Div(
                     className="item1",
                     children=[
-                        html.Div('Scheduler App Version 5.4.2'), 
+                        html.Div('Scheduler App Version 5.4.3'), 
                         ], ), 
                 html.Div(
                     className="grid-item2",
@@ -913,16 +913,17 @@ app.layout = html.Div(
                                                 
                                                 html.Div(id = 'export-button-status-text',
                                                          children = []),
-                                                html.A("Download Link", id="download-link", href="", target="_blank"),
+                                                html.A("Download Link", id="download-link", download="", href="", 
+                                                       target="_blank", style={'display': 'none', 'fontSize': 16, 'fontWeight': 'bold'}),
                                                 ], width = 10),
                                             dbc.Col([
                                                 html.Div(
                                                     className = "button_download_div",
                                                     children = [html.Button("Export to Excel", id="export-button", 
                                                                             className = "button_download"),]),
-                                                download_component,
-                                                download_component_daily,
-                                                download_component_cdata,
+                                                #download_component,
+                                                #download_component_daily,
+                                                #download_component_cdata,
                                                 ], width = 2),
                                             
                                             
@@ -2326,7 +2327,9 @@ def update_output_sales(contents, data, filename):
 
 @app.callback(
     [Output("download_component", "data"),
-     Output("export-button-status-text", "children")],
+     Output("export-button-status-text", "children"),
+     Output("download-link", "style"),
+     Output("download-link", "download")],
     [Input("export-button", "n_clicks")],
     [State('all-data', 'data')],
     prevent_initial_call=True,
@@ -2362,26 +2365,17 @@ def export_to_excel(n_clicks, all_data):
                      hourly_sched_df_thu, 
                      hourly_sched_df_fri, 
                      hourly_sched_df_sat]).reset_index(drop = True)
+    # Generate the filename with the current timestamp
+    filename = f"sched_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
     
-    filename_path = f"sched_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
-    csv_string = dff.to_csv(index=True, encoding="utf-8", 
-                            path_or_buf=filename_path)
-                  
-    return csv_string, html.H3("Download complete!")
+    # Specify the filename in the to_csv method
+    csv_string = dff.to_csv(index=False, encoding="utf-8", path_or_buf=filename)
+    
+    return csv_string, html.H3("Click on Download Link"), \
+        {'display': 'block', 'fontSize': 16, 'fontWeight': 'bold'}, filename
             
 
-@app.callback(
-    Output("download-link", "style"),
-    Input(download_component, "data"),
-    prevent_initial_call=True,
-)
-def show_download_link(data):
-    if not data:
-        raise PreventUpdate
-
-    return {'display': 'block'}
-
-
+"""
 @app.callback(
     Output("download-link", "href"),
     Input(download_component, "data"),
@@ -2392,8 +2386,8 @@ def update_download_link(data):
         raise PreventUpdate
 
     return f"data:text/csv;charset=utf-8,{data}"
-
+"""
 
 if __name__ == "__main__":
-    app.run_server(debug = True)
+    app.run_server(debug = False)
     
