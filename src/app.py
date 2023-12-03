@@ -2369,7 +2369,9 @@ def export_hourly_csv(n_clicks, all_data):
 def export_weekly_csv(n_clicks, w_data):
     
     dff = pd.DataFrame(w_data)
-    
+    dff = dff["Personnel Name", "Employment Type",
+              "Day Off", "Sunday", "Monday", "Tuesday",
+              "Wednesday", "Thursday", "Friday", "Saturday"]
     # Generate the filename with the current timestamp
     filename = f"weekly_sched_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv" 
     
@@ -2393,7 +2395,9 @@ def export_weekly_csv(n_clicks, w_data):
 def export_cashier_report_csv(n_clicks, c_data):
     
     dff = pd.DataFrame(c_data)
-    
+    dff = dff[["Employment Type",
+               "Sunday","Monday","Tuesday","Wednesday",
+               "Thursday", "Friday", "Saturday"]]
     # Generate the filename with the current timestamp
     filename = f"summary_report_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv" 
     
