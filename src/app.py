@@ -921,7 +921,7 @@ app.layout = html.Div(
                                                     className = "button_download_div",
                                                     children = [html.Button("Prepare to Export", id="export-button", 
                                                                             className = "button_download"),]),
-                                                #download_component,
+                                                download_component,
                                                 #download_component_daily,
                                                 #download_component_cdata,
                                                 ], width = 2),
@@ -2267,44 +2267,6 @@ def update_output_sales(contents, data, filename):
                 )
             ])
             
-            #Temporary
-            """
-            table_H1 = html.Div([
-                html.H5('Headcount Per Hour Calculation'),
-                dash_table.DataTable(
-                    id = 'table',
-                    columns = [{'name': col, 'id': col} for col in headcount_per_hour1.columns],
-                    data = headcount_per_hour1.to_dict('records'),
-                    style_data = {
-                                      'whiteSpace': 'normal',
-                                      'height': 'auto',
-                                      },
-                        style_table={'overflowY': 'auto'},
-                        #page_size = 10,
-                        style_data_conditional = style_data_conditional,
-                        style_cell = style_cell_option_script, 
-                        style_header = style_header_option_script
-                )
-            ])
-            
-            table_H2 = html.Div([
-                html.H5('Headcount Per Hour Step by Step Calculation'),
-                dash_table.DataTable(
-                    id = 'table',
-                    columns = [{'name': col, 'id': col} for col in headcount_per_hour2.columns],
-                    data = headcount_per_hour2.to_dict('records'),
-                    style_data = {
-                                      'whiteSpace': 'normal',
-                                      'height': 'auto',
-                                      },
-                        style_table={'overflowY': 'auto'},
-                        #page_size = 10,
-                        style_data_conditional = style_data_conditional,
-                        style_cell = style_cell_option_script, 
-                        style_header = style_header_option_script
-                )
-            ])
-            """
             return [table], [html.Div(className = "header-article-upload" , 
                                       children = ["Upload Successful"])], \
                     store_data_df_hour1, store_data_df_hour2, \
@@ -2329,25 +2291,46 @@ def update_output_sales(contents, data, filename):
     [Output("download_component", "data"),
      Output("export-button-status-text", "children")],
     [Input("export-button", "n_clicks")],
-    [State('hourly_sched_df_sun_table', 'derived_virtual_data')],
+    [State('hourly_sched_df_sun_table', 'derived_virtual_data'),
+     State('hourly_sched_df_mon_table', 'derived_virtual_data'),
+     State('hourly_sched_df_tue_table', 'derived_virtual_data'),
+     State('hourly_sched_df_wed_table', 'derived_virtual_data'),
+     State('hourly_sched_df_thu_table', 'derived_virtual_data'),
+     State('hourly_sched_df_fri_table', 'derived_virtual_data'),
+     State('hourly_sched_df_sat_table', 'derived_virtual_data')],
     prevent_initial_call=True,
 )
-def export_to_excel(n_clicks, sun_data):
-    dff = pd.DataFrame(sun_data)
-    dff["Day"] = "Sunday"
+def export_to_excel(n_clicks, sun_data, mon_data, tue_data,
+                    wed_data, thu_data, fri_data, sat_data):
     
-    #dff = pd.concat([hourly_sched_df_sun, 
-                     #hourly_sched_df_mon, 
-                     #hourly_sched_df_tue, 
-                     ##hourly_sched_df_wed, 
-                     #hourly_sched_df_thu, 
-                     #hourly_sched_df_fri, 
-                     #hourly_sched_df_sat], 
-                    #axis = 1,
-                    #ignore_index=True)
+    sun_dff = pd.DataFrame(sun_data)
+    sun_dff["Day"] = "Sun"
     
-    # Generate the filename with the current timestamp
-    #filename = f"sched_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
+    mon_dff = pd.DataFrame(mon_data)
+    mon_dff["Day"] = "Mon"
+    
+    tue_dff = pd.DataFrame(tue_data)
+    tue_dff["Day"] = "Tue"
+    
+    wed_dff = pd.DataFrame(wed_data)
+    wed_dff["Day"] = "Wed"
+    
+    thu_dff = pd.DataFrame(thu_data)
+    thu_dff["Day"] = "Thu"
+    
+    fri_dff = pd.DataFrame(fri_data)
+    fri_dff["Day"] = "Fri"
+    
+    sat_dff = pd.DataFrame(sat_data)
+    sat_dff["Day"] = "Sat"
+    
+    
+    dff = pd.concat([sun_dff,
+                     mon_dff,
+                     tue_dff,
+                     wed_dff, thu_dff,
+                     fri_dff, sat_dff], ignore_index=True)
+    
     
     # Specify the filename in the to_csv method
     csv_string = dff.to_csv(index=False, encoding="utf-8")
