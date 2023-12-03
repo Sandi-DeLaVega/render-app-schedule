@@ -10,7 +10,7 @@
 import os
 from dash import dcc, html, dash_table, Dash #ctx, no_update
 from dash.dependencies import Input, Output, State
-#from dash.exceptions import PreventUpdate
+from dash.exceptions import PreventUpdate
 import io
 import dash_bootstrap_components as dbc
 import base64
@@ -1148,7 +1148,7 @@ def generate_table(n_clicks, pdata, data1, data2):
                                        'height': 'auto',
                                                               },
                                                  style_table={'overflowY': 'auto'},
-                                                 page_size = 5,
+                                                 page_size = 8,
                                                   style_data_conditional = style_data_conditional,
                                                  style_cell = style_cell_option_script, 
                                                  style_header = style_header_option_script), 
@@ -2325,7 +2325,8 @@ def update_output_sales(contents, data, filename):
 
 
 @app.callback(
-    [Output("download_component", "data"),
+    [Output("export-button", "n_clicks"),
+     Output("download_component", "data"),
      #Output("download_component_daily", "data"),
      #Output("download_component_cdata", "data"),
     Output("export-button-status-text", "children"),
@@ -2350,16 +2351,19 @@ def export_to_excel(n_clicks, export_state, gen_disabled, #h1_data, h2_data,
     #global dataframes_summary
     
     if gen_disabled:
-        return None, html.H5("Please upload files in 1. Input/Upload Data Tab.")
+        return None, None, html.H5("Please upload files in 1. Input/Upload Data Tab.")
 
     else:  
         if export_state:
-            return None, html.H5("Press Generate Schedule Button at 1. Input/Upload Data Tab.")
+            return None, None, html.H5("Press Generate Schedule Button at 1. Input/Upload Data Tab.")
         
-        if export_state is False:
-            return None, html.H5("Results Ready to Export to Excel.")
+        #elif export_state is False:
+            #return None, None, html.H5("Results Ready to Export to Excel.")
         
         else: 
+            if n_clicks is None:
+                raise PreventUpdate
+        
             #headcount_per_hour1 = pd.DataFrame(h1_data)
             #headcount_per_hour2 = pd.DataFrame(h2_data)
             #weekly_sched_df = pd.DataFrame(w_data)
@@ -2399,88 +2403,9 @@ def export_to_excel(n_clicks, export_state, gen_disabled, #h1_data, h2_data,
                                     hourly_sched_df_fri,
                                     hourly_sched_df_sat])
             
-            """
-            summary_dict_results = all_data["Summary"]
-            hourly_sched_df_sun_summary = pd.DataFrame(summary_dict_results["Sunday"])#.set_index('index')
-            hourly_sched_df_mon_summary = pd.DataFrame(summary_dict_results["Monday"])#.set_index('index')
-            hourly_sched_df_tue_summary = pd.DataFrame(summary_dict_results["Tuesday"])#.set_index('index')
-            hourly_sched_df_wed_summary = pd.DataFrame(summary_dict_results["Wednesday"])#.set_index('index')
-            hourly_sched_df_thu_summary = pd.DataFrame(summary_dict_results["Thursday"])#.set_index('index')
-            hourly_sched_df_fri_summary = pd.DataFrame(summary_dict_results["Friday"])#.set_index('index')
-            hourly_sched_df_sat_summary = pd.DataFrame(summary_dict_results["Saturday"])#.set_index('index')
-            """
+                      
             
-            
-            
-            """
-            
-            dataframes = {
-                'WeeklySched': {'Summary': cashiers_reporting,
-                                 'Schedule': weekly_sched_df,
-                                 "Iteration": weekly_sched_gen},
-                
-                'DailySched': {'Sunday': hourly_sched_df_sun,
-                                    'Monday': hourly_sched_df_mon,
-                                    'Tuesday': hourly_sched_df_tue,
-                                    'Wednesday': hourly_sched_df_wed,
-                                    'Thursday': hourly_sched_df_thu,
-                                    'Friday': hourly_sched_df_fri,
-                                    'Saturday': hourly_sched_df_sat,},
-                
-                'HCSummary': {'Sunday': hourly_sched_df_sun_summary,
-                                'Monday': hourly_sched_df_mon_summary,
-                                'Tuesday': hourly_sched_df_tue_summary,
-                                'Wednesday': hourly_sched_df_wed_summary,
-                                'Thursday': hourly_sched_df_thu_summary,
-                                'Friday': hourly_sched_df_fri_summary,
-                                'Saturday': hourly_sched_df_sat_summary,},
-                
-                'Calc': {"HC Per Hour": headcount_per_hour1,
-                                "HC Calc Step": headcount_per_hour2,
-                                "Hourly Check": dataframe_hourly_basis_df,}
-                
-            }
-            """
-            # Save the Excel file to the Downloads folder
-            #downloads_folder = os.path.join(os.path.expanduser("~"), "Downloads")
-            filename_path = f"results_export_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.xlsx"
-            #excel_file_path = os.path.join(downloads_folder, filename_path)
-
-            # Create a Pandas Excel writer using openpyxl
-            excel_writer = pd.ExcelWriter(filename_path, 
-                                          engine='openpyxl')
-
-
-            # Iterate through dataframes and save each one in a separate worksheet
-            for sheet_name in dataframes.keys():
-                count = 0
-                for title in dataframes[sheet_name].keys():
-                    df = dataframes[sheet_name][title]
-                    
-                    
-                    # Write the DataFrame with a title to the Excel sheet
-                    df.to_excel(excel_writer, sheet_name=sheet_name, 
-                                       startrow = count + 1, header=True, index=False)
-                    
-                    # Get the worksheet and the cell corresponding to the title
-                    worksheet = excel_writer.sheets[sheet_name]
-                    cell = worksheet.cell(count + 1, 1)
-                    
-                    # Write the title to the cell
-                    cell.value = title
-                    
-                    count += len(df) + 4
-                    
-
-            # Save the Excel file
-            #excel_writer.save()
-            excel_writer.close()
-
-            # Open the Excel file using the default program
-            #subprocess.run(['xdg-open', filename_path], shell=True)
-            #webbrowser.open(filename_path)            
-            
-            return dcc.send_data_frame(hc_summary.to_csv,"hourly_csv.csv"),\
+            return None, dcc.send_data_frame(hc_summary.to_csv,"hourly_csv.csv"),\
                 html.H5("Results Exported Successfully. Please save the file manually.")
                 #dcc.send_data_frame(weekly_sched_df.to_csv, "daily_sched.csv"), \
                 #dcc.send_data_frame(cashiers_reporting.to_csv,"cashiers_reporting.csv"), \
