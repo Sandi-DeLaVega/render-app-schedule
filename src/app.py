@@ -2322,13 +2322,15 @@ def export_to_excel(n_clicks, all_data):
     dataframes = [pd.DataFrame(day_data) if day_data else pd.DataFrame(columns=reorder_col) \
                   for day_data in [sun_data, mon_data, tue_data, wed_data, thu_data, fri_data, sat_data]]
 
-     # Add "Day" column and reorder columns
+    dataframes_reordered = []
+    # Add "Day" column and reorder columns
     for day, df in zip(days, dataframes):
         df["Day"] = day
         df = df[reorder_col]
+        dataframes_reordered.append(df)
         
     # Concatenate all DataFrames
-    dff = pd.concat(dataframes)
+    dff = pd.concat(dataframes_reordered)
     
     # Specify the filename in the to_csv method
     csv_string = dff.to_csv(index=False, encoding="utf-8")
