@@ -149,6 +149,7 @@ day_off_matrix_df.set_index('Dayoff', inplace =True)
 download_component = dcc.Download(id="download_component")
 download_component_daily = dcc.Download(id = "download_component_daily")
 download_component_cdata = dcc.Download(id = "download_component_cdata")
+download_component_cdata_summary = dcc.Download(id = "download_component_cdata_summary")
 # -------------------------------------------------
 
 style_data_conditional = [
@@ -245,7 +246,7 @@ app.layout = html.Div(
                 html.Div(
                     className="item1",
                     children=[
-                        html.Div('Scheduler App Version 5.4.3.1'), 
+                        html.Div('Scheduler App Version 5.5'), 
                         ], ), 
                 html.Div(
                     className="grid-item2",
@@ -917,6 +918,7 @@ app.layout = html.Div(
                                                 download_component,
                                                 download_component_daily,
                                                 download_component_cdata,
+                                                download_component_cdata_summary,
                                                 ], width = 2),
                                             
                                             dbc.Col([
@@ -938,6 +940,12 @@ app.layout = html.Div(
                                                 html.A("Download Summary Report.csv", 
                                                        id="download-link-cdata", 
                                                        download="cashier_reporting.csv", href="",
+                                                       style={'display': 'none'},
+                                                       target="_blank"),
+                                                
+                                                html.A("Download Summary Over/Under Capacity.csv", 
+                                                       id="download-link-cdata-summary", 
+                                                       download="personnel_count.csv", href="",
                                                        style={'display': 'none'},
                                                        target="_blank"),
                                                 
@@ -972,7 +980,7 @@ app.layout = html.Div(
                 html.Div(
                     className="item2",
                     children=[
-                        html.Div('Updated as of Dec 3, 2023'), 
+                        html.Div('Updated as of Dec 10, 2023'), 
                         ], ), 
                 html.Div(
                     className="grid-item2",
@@ -2353,8 +2361,90 @@ def export_hourly_csv(n_clicks, all_data):
     # Specify the filename in the to_csv method
     csv_string = dff.to_csv(index=False, encoding="utf-8")
     
-    return csv_string, html.H3("Click on Download Link"), \
+    return dict(content=csv_string, filename=filename), html.H3("Click on Download Link"), \
         {'display': 'block', 'fontSize': 16, 'fontWeight': 'bold'}, filename
+
+
+
+
+
+@app.callback(
+    [Output("download_component_cdata_summary", "data"),
+     Output("download-link-cdata-summary", "style"),
+     Output("download-link-cdata-summary", "download")],
+    [Input("export-button", "n_clicks")],
+    [State('all-data', 'data')],
+    prevent_initial_call=True,
+)
+def export_hourly_csv_summary(n_clicks, all_data):
+    
+    main_dict_results = all_data["Summary"]
+    sun_data = main_dict_results["Sunday"]
+    mon_data = main_dict_results["Monday"]
+    tue_data = main_dict_results["Tuesday"]
+    wed_data = main_dict_results["Wednesday"]
+    thu_data = main_dict_results["Thursday"]
+    fri_data = main_dict_results["Friday"]
+    sat_data = main_dict_results["Saturday"]
+    
+    #reorder_col = []
+    reorder_col = ["Day","index",
+                       "8.00-9.00","9.00-10.00","10.00-11.00","11.00-12.00",
+                       "12.00-13.00","13.00-14.00", "14.00-15.00","15.00-16.00",
+                      "16.00-17.00","17.00-18.00","18.00-19.00","19.00-20.00",
+                     "20.00-21.00","21.00-22.00"]
+    
+    #reordered_columns = [{'name': col, 'id': col} for col in desired_order]
+    days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    dataframes = [pd.DataFrame(day_data) if day_data else pd.DataFrame(columns=reorder_col) \
+                  for day_data in [sun_data, mon_data, tue_data, wed_data, thu_data, fri_data, sat_data]]
+
+    dataframes_reordered = []
+    # Add "Day" column and reorder columns
+    for day, df in zip(days, dataframes):
+        df["Day"] = day
+        df = df[reorder_col]
+        dataframes_reordered.append(df)
+        
+    # Concatenate all DataFrames
+    dff = pd.concat(dataframes_reordered)
+    
+    condition = dff['index'] == 'HC Remaining'
+    filtered_rows = dff[condition]
+    max_values = filtered_rows[["8.00-9.00","9.00-10.00","10.00-11.00","11.00-12.00",
+                    "12.00-13.00","13.00-14.00", "14.00-15.00","15.00-16.00",
+                   "16.00-17.00","17.00-18.00","18.00-19.00","19.00-20.00",
+                  "20.00-21.00","21.00-22.00"]].max(axis = 1)
+    
+    dff.loc[condition, 'Max_Value'] = max_values
+    
+    cap_condition = dff["Max_Value"] == 0
+    
+    dff['Capacity'] = pd.cut(dff['Max_Value'], 
+                             bins=[-float('inf'), 0, float('inf')], 
+                             labels=['OverCap', 'UnderCap'])
+
+    dff.loc[cap_condition, 'Capacity'] = None
+    
+    
+    dff['By'] = None  # initialize 'By' column
+    overcap_mask = (dff['Capacity'] == 'OverCap') & (dff['Max_Value'] < 0)
+    undercap_mask = (dff['Capacity'] == 'UnderCap') & (dff['Max_Value'] > 0)
+    
+    dff.loc[overcap_mask, 'By'] = -dff.loc[overcap_mask, 'Max_Value']
+    dff.loc[undercap_mask, 'By'] = dff.loc[undercap_mask, 'Max_Value']
+
+    # Generate the filename with the current timestamp
+    filename = f"personnel_count_sched_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
+    
+    
+    # Specify the filename in the to_csv method
+    csv_string = dff.to_csv(index=False, encoding="utf-8")
+    
+    return dict(content=csv_string, filename=filename), \
+        {'display': 'block', 'fontSize': 16, 'fontWeight': 'bold'}, filename
+
+
 
 
 
@@ -2384,7 +2474,7 @@ def export_weekly_csv(n_clicks, w_data):
     # Specify the filename in the to_csv method
     csv_string = dff.to_csv(index=False, encoding="utf-8")
     
-    return csv_string, \
+    return dict(content=csv_string, filename=filename), \
         {'display': 'block', 'fontSize': 16, 'fontWeight': 'bold'}, filename
 
 
@@ -2410,7 +2500,7 @@ def export_cashier_report_csv(n_clicks, c_data):
     # Specify the filename in the to_csv method
     csv_string = dff.to_csv(index=False, encoding="utf-8")
     
-    return csv_string, \
+    return dict(content=csv_string, filename=filename), \
         {'display': 'block', 'fontSize': 16, 'fontWeight': 'bold'}, filename
 
 
@@ -2426,7 +2516,7 @@ def update_download_link(data):
     if not data:
         raise PreventUpdate
 
-    return f"data:text/csv;charset=utf-8,{data}"
+    return f"data:text/csv;charset=utf-8,{data['content']}"
 
 
 
@@ -2439,7 +2529,7 @@ def update_download_link_daily(data):
     if not data:
         raise PreventUpdate
 
-    return f"data:text/csv;charset=utf-8,{data}"
+    return f"data:text/csv;charset=utf-8,{data['content']}"
 
 
 
@@ -2453,7 +2543,19 @@ def update_download_link_cdata(data):
     if not data:
         raise PreventUpdate
 
-    return f"data:text/csv;charset=utf-8,{data}"
+    return f"data:text/csv;charset=utf-8,{data['content']}"
+
+
+@app.callback(
+    Output("download-link-cdata-summary", "href"),
+    Input(download_component_cdata_summary, "data"),
+    prevent_initial_call=True,
+)
+def update_download_link_cdata_summary(data):
+    if not data:
+        raise PreventUpdate
+
+    return f"data:text/csv;charset=utf-8,{data['content']}"
 
 
 
