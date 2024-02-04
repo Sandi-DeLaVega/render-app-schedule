@@ -2348,7 +2348,13 @@ def export_hourly_csv(n_clicks, all_data):
     # Add "Day" column and reorder columns
     for day, df in zip(days, dataframes):
         df["Day"] = day
+        
         df = df[reorder_col]
+        
+        # Add "Bagger Row" and "WAAC Row" rows
+        df.loc[len(df.index)] = ["Bagger"] + [""] * (len(reorder_col) - 1)
+        df.loc[len(df.index)] = ["WAAC"] + [""] * (len(reorder_col) - 1)
+        
         dataframes_reordered.append(df)
         
     # Concatenate all DataFrames
