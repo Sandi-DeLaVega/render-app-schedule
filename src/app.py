@@ -2019,8 +2019,9 @@ def process_excel_main_data(file_contents):
     global included_col
     
     try:
-        # Read the Excel file into a DataFrame
-        df = pd.read_excel(io.BytesIO(file_contents), skiprows=12).iloc[2:-2,:]
+        # Read the Excel file into a 
+        #from skiprows = 12 to 13 after change in BI system
+        df = pd.read_excel(io.BytesIO(file_contents), skiprows=13).iloc[2:-2,:]
         
         if len(df) > 0:
             unclean_col = df.columns.tolist()
