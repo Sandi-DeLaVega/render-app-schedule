@@ -150,6 +150,10 @@ download_component = dcc.Download(id="download_component")
 download_component_daily = dcc.Download(id = "download_component_daily")
 download_component_cdata = dcc.Download(id = "download_component_cdata")
 download_component_cdata_summary = dcc.Download(id = "download_component_cdata_summary")
+
+download_component_weekly_sched_gen_data = dcc.Download(id = "download_component_weekly_sched_gen_data")
+download_component_headcount_per_hour1 = dcc.Download(id = "download_component_headcount_per_hour1")
+download_component_headcount_per_hour2 = dcc.Download(id = "download_component_headcount_per_hour2")
 # -------------------------------------------------
 
 style_data_conditional = [
@@ -184,7 +188,7 @@ Keywords, score, playbook_tagging, decision_set = [], [], [], []
 
 #Creates a path to app's primary css specifications
 assets_path = os.getcwd() +'\\assets'
-dbc_css = os.path.join("assets_path", "scheduler_v1_3.css")
+dbc_css = os.path.join("assets_path", "scheduler_v1_4.css")
 
 #server = Flask(__name__)
 #changed by uncommenting server = Flask
@@ -246,7 +250,7 @@ app.layout = html.Div(
                 html.Div(
                     className="item1",
                     children=[
-                        html.Div('Scheduler App Version 5.5'), 
+                        html.Div('Scheduler App Version 6'), 
                         ], ), 
                 html.Div(
                     className="grid-item2",
@@ -919,35 +923,62 @@ app.layout = html.Div(
                                                 download_component_daily,
                                                 download_component_cdata,
                                                 download_component_cdata_summary,
+                                                download_component_weekly_sched_gen_data,
+                                                download_component_headcount_per_hour1,
+                                                download_component_headcount_per_hour2,
                                                 ], width = 2),
                                             
                                             dbc.Col([
                                                 
-                                                html.Div(id = 'export-button-status-text',
-                                                         children = []),
-                                                html.A("Download Hourly.csv", 
-                                                       id="download-link", 
-                                                       download="hourly.csv", href="",
-                                                       style={'display': 'none'},
-                                                       target="_blank"),
+                                                html.Div(className = "div-output-link", 
+                                                         children = [
+                                                             html.Div(id = 'export-button-status-text',
+                                                                      children = []),
+                                                             html.A("Download Hourly.csv", 
+                                                                    id="download-link", 
+                                                                    download="hourly.csv", href="",
+                                                                    style={'display': 'none'},
+                                                                    target="_blank"),
+                                                             
+                                                             html.A("Download Weekly Sched.csv", 
+                                                                    id="download-link-daily", 
+                                                                    download="weeklysched.csv", href="",
+                                                                    style={'display': 'none'},
+                                                                    target="_blank"),
+                                                             
+                                                             html.A("Download Summary Report.csv", 
+                                                                    id="download-link-cdata", 
+                                                                    download="cashier_reporting.csv", href="",
+                                                                    style={'display': 'none'},
+                                                                    target="_blank"),
+                                                             
+                                                             html.A("Download Summary Over/Under Capacity.csv", 
+                                                                    id="download-link-cdata-summary", 
+                                                                    download="personnel_count.csv", href="",
+                                                                    style={'display': 'none'},
+                                                                    target="_blank"),
+                                                             
+                                                             #New Links
+                                                             html.A("Disregard Download Weekly_Sched_Gen_Data.csv", 
+                                                                    id="download-link-cdata-weekly_sched_gen_data", 
+                                                                    download="weekly_sched_gen_data.csv", href="",
+                                                                    style={'display': 'none'},
+                                                                    target="_blank"),
+                                                             
+                                                             html.A("Disregard Download headcount_per_hour1.csv", 
+                                                                    id="download-link-cdata-headcount_per_hour1", 
+                                                                    download="headcount_per_hour1.csv", href="",
+                                                                    style={'display': 'none'},
+                                                                    target="_blank"),
+                                                             
+                                                             html.A("Disregard Download headcount_per_hour2.csv", 
+                                                                    id="download-link-cdata-headcount_per_hour2", 
+                                                                    download="headcount_per_hour2.csv", href="",
+                                                                    style={'display': 'none'},
+                                                                    target="_blank"),
+                                                             
+                                                             ]),
                                                 
-                                                html.A("Download Weekly Sched.csv", 
-                                                       id="download-link-daily", 
-                                                       download="weeklysched.csv", href="",
-                                                       style={'display': 'none'},
-                                                       target="_blank"),
-                                                
-                                                html.A("Download Summary Report.csv", 
-                                                       id="download-link-cdata", 
-                                                       download="cashier_reporting.csv", href="",
-                                                       style={'display': 'none'},
-                                                       target="_blank"),
-                                                
-                                                html.A("Download Summary Over/Under Capacity.csv", 
-                                                       id="download-link-cdata-summary", 
-                                                       download="personnel_count.csv", href="",
-                                                       style={'display': 'none'},
-                                                       target="_blank"),
                                                 
                                                 ], width = 10),
                                             
@@ -980,7 +1011,7 @@ app.layout = html.Div(
                 html.Div(
                     className="item2",
                     children=[
-                        html.Div('Updated as of Dec 10, 2023'), 
+                        html.Div('Updated as of Feb 28, 2024'), 
                         ], ), 
                 html.Div(
                     className="grid-item2",
@@ -1274,14 +1305,17 @@ def generate_table(n_clicks, pdata, data1, data2):
             allocated_hourly_sched_part_time = []
             
             Part1_loop = ["Step 1 Must Start at 8", 
-                          "Step 3 Must Start at 12",
-                          "Step 5 Must Start at 10",
+                          
                           "Step 2 Must Start at 9",
-                          "Step 4 Must Start at 11"]
+                          "Step 2.5 Must Start at 13",
+                          "Step 3 Must Start at 12", 
+                          "Step 4 Must Start at 11",
+                          "Step 5 Must Start at 10"]
             
             start_dict = {"Step 1 Must Start at 8": 8, 
                           "Step 3 Must Start at 12": 12,
                           "Step 5 Must Start at 10": 10,
+                          "Step 2.5 Must Start at 13": 13,
                           "Step 2 Must Start at 9": 9,
                           "Step 4 Must Start at 11": 11}
             
@@ -1415,25 +1449,25 @@ def generate_table(n_clicks, pdata, data1, data2):
                 remaining = len(avail_to_allocate) - (allocated_personnel_count)
                 
                 #-------------------------Part 2 Loop
-                Part2_loop = ["Step 6 Add To Cover 1800H", 
-                              "Step 7 Add To Cover 1700H",
-                              "Step 8 Add To Cover 1600H",
+                Part2_loop = ["Step 6 Add To Cover 1700H", 
+                              "Step 7 Add To Cover 1600H",
+                              "Step 8 Add To Cover 1500H",
                               "Step 9 Add To Cover 1000H",
                               "Step 10 Add To Cover 1100H",
                               "Step 11 Add To Cover 1200H",
                               "Step 12 Add To Cover 1300H",
-                              "Step 13 Add To Cover 1400H",
-                              "Step 14 Add To Cover 1500H"]
+                              "Step 13 Add To Cover 1400H",]
+                              #"Step 14 Add To Cover 1500H"]
                 
-                start_end_dict = {"Step 6 Add To Cover 1800H": (9, 12), 
-                              "Step 7 Add To Cover 1700H": (8, 12),
-                              "Step 8 Add To Cover 1600H": (8, 12),
+                start_end_dict = {"Step 6 Add To Cover 1700H": (9, 12), 
+                              "Step 7 Add To Cover 1600H": (8, 12),
+                              "Step 8 Add To Cover 1500H": (8, 12),
                               "Step 9 Add To Cover 1000H": (8, 10),
                               "Step 10 Add To Cover 1100H": (8, 11),
                               "Step 11 Add To Cover 1200H": (8, 12),
                               "Step 12 Add To Cover 1300H": (8, 12),
-                              "Step 13 Add To Cover 1400H": (8, 12),
-                              "Step 14 Add To Cover 1500H": (8, 12)}      
+                              "Step 13 Add To Cover 1400H": (8, 12),}
+                              #"Step 14 Add To Cover 1500H": (8, 12)}      
                 
                     
                 main_hour_df_basis_2_part2 = main_hour_df_basis_2[Part2_loop] 
@@ -2021,6 +2055,7 @@ def process_excel_main_data(file_contents):
     try:
         # Read the Excel file into a 
         #from skiprows = 12 to 13 after change in BI system
+        #df = pd.read_excel(io.BytesIO(file_contents), skiprows=13).iloc[2:-2,:]
         df = pd.read_excel(io.BytesIO(file_contents), skiprows=13).iloc[2:-2,:]
         
         if len(df) > 0:
@@ -2145,33 +2180,42 @@ def update_output_sales(contents, data, filename):
 
             #Step 2 = Must Start at 9
             headcount_per_hour2["Step 2 Must Start at 9"] = \
-                    (headcount_per_hour1["9.00-10.00"] - headcount_per_hour2["Step 1 Must Start at 8"]).clip(lower=0)
+                (headcount_per_hour1["9.00-10.00"] - np.ceil(headcount_per_hour2["Step 1 Must Start at 8"]*0.5)).clip(lower=0)
+                    #(headcount_per_hour1["9.00-10.00"] - headcount_per_hour2["Step 1 Must Start at 8"]).clip(lower=0)
 
+            #Step 2.5 = Must Start at 13 #To cover 2100 onwards
+            headcount_per_hour2["Step 2.5 Must Start at 13"] = headcount_per_hour1["21.00-22.00"]
+            
             #Step 3 = Must Start at 12 #To cover 2100 onwards
-            headcount_per_hour2["Step 3 Must Start at 12"] = headcount_per_hour1["21.00-22.00"]
+            headcount_per_hour2["Step 3 Must Start at 12"] = (headcount_per_hour1["20.00-21.00"] - \
+               headcount_per_hour2["Step 2.5 Must Start at 13"]).clip(lower=0)
                 
             #Step 4 = Must Start at 11 #To cover 2000 onwards
             headcount_per_hour2["Step 4 Must Start at 11"] = \
-                    (headcount_per_hour1["20.00-21.00"] - headcount_per_hour2["Step 3 Must Start at 12"]).clip(lower=0)
+                    (headcount_per_hour1["19.00-20.00"] - headcount_per_hour2["Step 3 Must Start at 12"] - \
+                        headcount_per_hour2["Step 2.5 Must Start at 13"]).clip(lower=0)
 
 
             #Step 5 = Must Start at 10 #To cover 1900 onwards
             headcount_per_hour2["Step 5 Must Start at 10"] = \
-                    (headcount_per_hour1["19.00-20.00"] - headcount_per_hour2["Step 4 Must Start at 11"] - \
+                    (headcount_per_hour1["18.00-19.00"] - headcount_per_hour2["Step 2.5 Must Start at 13"] -\
+                     headcount_per_hour2["Step 4 Must Start at 11"] - \
                      headcount_per_hour2["Step 3 Must Start at 12"]).clip(lower=0)
 
             #Step 6 Additional to cover 1800H that can Start at 9 to 12
-            headcount_per_hour2["Step 6 Add To Cover 1800H"] = \
-                    (headcount_per_hour1["18.00-19.00"] - \
+            headcount_per_hour2["Step 6 Add To Cover 1700H"] = \
+                    (headcount_per_hour1["17.00-18.00"] - \
                      headcount_per_hour2["Step 2 Must Start at 9"]  - \
+                         headcount_per_hour2["Step 2.5 Must Start at 13"] - \
                      headcount_per_hour2["Step 3 Must Start at 12"] - \
                      headcount_per_hour2["Step 4 Must Start at 11"] - \
                      headcount_per_hour2["Step 5 Must Start at 10"]).clip(lower=0)
                         
                         
             #Step 7 Additional to cover 1700H that can Start at 8 to 12
-            headcount_per_hour2["Step 7 Add To Cover 1700H"] = \
-                    (headcount_per_hour1["17.00-18.00"] - \
+            headcount_per_hour2["Step 7 Add To Cover 1600H"] = \
+                    (headcount_per_hour1["16.00-17.00"] - \
+                     np.ceil(headcount_per_hour2["Step 2.5 Must Start at 13"]*0.5) -\
                      headcount_per_hour2["Step 1 Must Start at 8"] - \
                      headcount_per_hour2["Step 2 Must Start at 9"]  - \
                      headcount_per_hour2["Step 3 Must Start at 12"] - \
@@ -2179,11 +2223,12 @@ def update_output_sales(contents, data, filename):
                      headcount_per_hour2["Step 5 Must Start at 10"]).clip(lower=0)
 
             #Step 8 Additional to cover 1600H that can Start at 8 to 12
-            headcount_per_hour2["Step 8 Add To Cover 1600H"] = \
-                    (headcount_per_hour1["16.00-17.00"] - \
+            headcount_per_hour2["Step 8 Add To Cover 1500H"] = \
+                    (headcount_per_hour1["15.00-16.00"] - \
                      headcount_per_hour2["Step 1 Must Start at 8"] - \
                      headcount_per_hour2["Step 2 Must Start at 9"]  - \
-                     headcount_per_hour2["Step 3 Must Start at 12"] - \
+                         np.ceil(headcount_per_hour2["Step 2.5 Must Start at 13"]*0.5)  -\
+                             np.ceil(headcount_per_hour2["Step 3 Must Start at 12"]*0.5) - \
                      headcount_per_hour2["Step 4 Must Start at 11"] - \
                      headcount_per_hour2["Step 5 Must Start at 10"]).clip(lower=0)
 
@@ -2193,9 +2238,9 @@ def update_output_sales(contents, data, filename):
                      np.ceil(headcount_per_hour2["Step 1 Must Start at 8"]*0.5) - \
                      headcount_per_hour2["Step 2 Must Start at 9"]  - \
                      headcount_per_hour2["Step 5 Must Start at 10"] - \
-                         headcount_per_hour2["Step 6 Add To Cover 1800H"] - \
-                         headcount_per_hour2["Step 7 Add To Cover 1700H"] - \
-                         headcount_per_hour2["Step 8 Add To Cover 1600H"] ).clip(lower=0)
+                         headcount_per_hour2["Step 6 Add To Cover 1700H"] - \
+                         headcount_per_hour2["Step 7 Add To Cover 1600H"] - \
+                         headcount_per_hour2["Step 8 Add To Cover 1500H"] ).clip(lower=0)
 
             #Step 10 Additional to cover 1100H
             headcount_per_hour2["Step 10 Add To Cover 1100H"] = \
@@ -2204,9 +2249,9 @@ def update_output_sales(contents, data, filename):
                       np.ceil(headcount_per_hour2["Step 2 Must Start at 9"]*0.5)  - \
                           headcount_per_hour2["Step 4 Must Start at 11"] - \
                      headcount_per_hour2["Step 5 Must Start at 10"] - \
-                         headcount_per_hour2["Step 6 Add To Cover 1800H"] - \
-                         headcount_per_hour2["Step 7 Add To Cover 1700H"] - \
-                         headcount_per_hour2["Step 8 Add To Cover 1600H"] ).clip(lower=0)
+                         headcount_per_hour2["Step 6 Add To Cover 1700H"] - \
+                         headcount_per_hour2["Step 7 Add To Cover 1600H"] - \
+                         headcount_per_hour2["Step 8 Add To Cover 1500H"] ).clip(lower=0)
                         
             #Step 11 Additional to cover 1200H
             headcount_per_hour2["Step 11 Add To Cover 1200H"] = \
@@ -2216,21 +2261,23 @@ def update_output_sales(contents, data, filename):
                           headcount_per_hour2["Step 3 Must Start at 12"] - \
                           headcount_per_hour2["Step 4 Must Start at 11"] - \
                       np.ceil(headcount_per_hour2["Step 5 Must Start at 10"]*0.5) - \
-                         headcount_per_hour2["Step 6 Add To Cover 1800H"] - \
-                         headcount_per_hour2["Step 7 Add To Cover 1700H"] - \
-                         headcount_per_hour2["Step 8 Add To Cover 1600H"] ).clip(lower=0)
+                         headcount_per_hour2["Step 6 Add To Cover 1700H"] - \
+                         headcount_per_hour2["Step 7 Add To Cover 1600H"] - \
+                         headcount_per_hour2["Step 8 Add To Cover 1500H"] ).clip(lower=0)
                         
             #Step 12 Additional to cover 1300H
             headcount_per_hour2["Step 12 Add To Cover 1300H"] = \
                     (headcount_per_hour1["13.00-14.00"] - \
                      headcount_per_hour2["Step 1 Must Start at 8"] - \
                       headcount_per_hour2["Step 2 Must Start at 9"] - \
+                          headcount_per_hour2["Step 2.5 Must Start at 13"] -\
                           headcount_per_hour2["Step 3 Must Start at 12"]  - \
                          np.ceil( headcount_per_hour2["Step 4 Must Start at 11"]*0.5) - \
                       np.ceil(headcount_per_hour2["Step 5 Must Start at 10"]*0.5) - \
-                         np.ceil(headcount_per_hour2["Step 6 Add To Cover 1800H"]*0.75) - \
-                         np.ceil(headcount_per_hour2["Step 7 Add To Cover 1700H"]*0.8) - \
-                         np.ceil(headcount_per_hour2["Step 8 Add To Cover 1600H"]*0.8) ).clip(lower=0)
+                         np.ceil(headcount_per_hour2["Step 6 Add To Cover 1700H"]*0.75) - \
+                         np.ceil(headcount_per_hour2["Step 7 Add To Cover 1600H"]*0.8) - \
+                         np.ceil(headcount_per_hour2["Step 8 Add To Cover 1500H"]*0.8) 
+                         ).clip(lower=0)
                         
             #Step 13 Additional to cover 1400H
             headcount_per_hour2["Step 13 Add To Cover 1400H"] = \
@@ -2240,10 +2287,12 @@ def update_output_sales(contents, data, filename):
                           np.ceil(headcount_per_hour2["Step 3 Must Start at 12"]*0.5)  - \
                          np.ceil( headcount_per_hour2["Step 4 Must Start at 11"]*0.5) - \
                       headcount_per_hour2["Step 5 Must Start at 10"] - \
-                         np.ceil(headcount_per_hour2["Step 6 Add To Cover 1800H"]*0.75) - \
-                         np.ceil(headcount_per_hour2["Step 7 Add To Cover 1700H"]*0.8) - \
-                         np.ceil(headcount_per_hour2["Step 8 Add To Cover 1600H"]*0.8) ).clip(lower=0)
-                        
+                         np.ceil(headcount_per_hour2["Step 6 Add To Cover 1700H"]*0.75) - \
+                         np.ceil(headcount_per_hour2["Step 7 Add To Cover 1600H"]*0.8) - \
+                         np.ceil(headcount_per_hour2["Step 8 Add To Cover 1500H"]*0.8) \
+                             ).clip(lower=0)
+            
+            """           
             #Step 14 Additional to cover 1500H
             headcount_per_hour2["Step 14 Add To Cover 1500H"] = \
                     (headcount_per_hour1["15.00-16.00"] - \
@@ -2255,7 +2304,7 @@ def update_output_sales(contents, data, filename):
                     np.ceil(headcount_per_hour2["Step 6 Add To Cover 1800H"]*0.875) - \
                     np.ceil(headcount_per_hour2["Step 7 Add To Cover 1700H"]*0.9) - \
                     np.ceil(headcount_per_hour2["Step 8 Add To Cover 1600H"]*0.9) ).clip(lower=0)
-
+            """
             headcount_per_hour2["Total Required"] = \
                 headcount_per_hour2[headcount_per_hour2.columns.tolist()[1:]].sum(axis = 1)
 
@@ -2512,6 +2561,56 @@ def export_cashier_report_csv(n_clicks, c_data):
 
 
 
+@app.callback(
+    [Output("download_component_headcount_per_hour1", "data"),
+     Output("download_component_headcount_per_hour2", "data"),
+     Output('download_component_weekly_sched_gen_data', 'data'),
+     
+     Output("download-link-cdata-headcount_per_hour1", "style"),
+     Output("download-link-cdata-headcount_per_hour2", "style"),
+     Output("download-link-cdata-weekly_sched_gen_data", "style"),
+     
+     Output("download-link-cdata-headcount_per_hour1", "download"),
+     Output("download-link-cdata-headcount_per_hour2", "download"),
+     Output("download-link-cdata-weekly_sched_gen_data", "download"),
+     ],
+    [Input("export-button", "n_clicks")],
+    [ State('headcount_per_hour1', 'data'),
+     State('headcount_per_hour2', 'data'),
+     State('weekly_sched_gen-data', 'data')],
+    prevent_initial_call=True,
+)
+def export_headcount_per_hour1and2_csv(n_clicks, hdata1, hdata2,wdata):
+    
+    hdata1_dff = pd.DataFrame(hdata1)
+    hdata2_dff = pd.DataFrame(hdata2)
+    wdata_dff = pd.DataFrame(wdata)
+    
+    # Generate the filename with the current timestamp
+    filename1 = f"disregard_headcount_per_hour1_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv" 
+    filename2 = f"disregard_headcount_per_hour2_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv" 
+    filename3 = f"disregard_weekly_sched_gen_data_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv" 
+    
+    # Specify the filename in the to_csv method
+    csv_string1 = hdata1_dff.to_csv(index=False, encoding="utf-8")
+    csv_string2 = hdata2_dff.to_csv(index=False, encoding="utf-8")
+    csv_string3 = wdata_dff.to_csv(index=False, encoding="utf-8")
+    
+    
+    return dict(content=csv_string1, filename=filename1), \
+        dict(content=csv_string2, filename=filename2),\
+            dict(content=csv_string3, filename=filename3),\
+        {'display': 'block', 'fontSize': 16, 'fontWeight': 'bold'},\
+        {'display': 'block', 'fontSize': 16, 'fontWeight': 'bold'}, \
+            {'display': 'block', 'fontSize': 16, 'fontWeight': 'bold'},\
+                filename1,\
+                    filename2,\
+                    filename3,
+        
+        
+        
+
+
 
 
 @app.callback(
@@ -2559,6 +2658,42 @@ def update_download_link_cdata(data):
     prevent_initial_call=True,
 )
 def update_download_link_cdata_summary(data):
+    if not data:
+        raise PreventUpdate
+
+    return f"data:text/csv;charset=utf-8,{data['content']}"
+
+
+@app.callback(
+    Output("download-link-cdata-weekly_sched_gen_data", "href"),
+    Input(download_component_weekly_sched_gen_data, "data"),
+    prevent_initial_call=True,
+)
+def update_download_link_cdata_summary_weekly_sched_gen_data(data):
+    if not data:
+        raise PreventUpdate
+
+    return f"data:text/csv;charset=utf-8,{data['content']}"
+
+
+@app.callback(
+    Output("download-link-cdata-headcount_per_hour1", "href"),
+    Input(download_component_headcount_per_hour1, "data"),
+    prevent_initial_call=True,
+)
+def update_download_link_cdata_summary_headcount_per_hour1(data):
+    if not data:
+        raise PreventUpdate
+
+    return f"data:text/csv;charset=utf-8,{data['content']}"
+
+
+@app.callback(
+    Output("download-link-cdata-headcount_per_hour2", "href"),
+    Input(download_component_headcount_per_hour2, "data"),
+    prevent_initial_call=True,
+)
+def update_download_link_cdata_summary_headcount_per_hour2(data):
     if not data:
         raise PreventUpdate
 
