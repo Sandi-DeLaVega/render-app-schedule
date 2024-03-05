@@ -250,7 +250,7 @@ app.layout = html.Div(
                 html.Div(
                     className="item1",
                     children=[
-                        html.Div('Scheduler App Version 6'), 
+                        html.Div('Scheduler App Version 7'), 
                         ], ), 
                 html.Div(
                     className="grid-item2",
@@ -1011,7 +1011,7 @@ app.layout = html.Div(
                 html.Div(
                     className="item2",
                     children=[
-                        html.Div('Updated as of Feb 28, 2024'), 
+                        html.Div('Updated as of Mar 5, 2024'), 
                         ], ), 
                 html.Div(
                     className="grid-item2",
@@ -1036,7 +1036,7 @@ app.layout = html.Div(
     
     
     
-
+#---------------------------------End of Layout---------------------------#
 @app.callback(
     [Output('generate--model-button', 'disabled'),
         Output('generate--model-button', 'style'),
@@ -1061,6 +1061,8 @@ def update_button_status(file1_contents, file2_contents):
         return True, {'background-color': '#ddd'}, html.Div('Please upload Personnel Data and Sales Data.')
     
 
+
+
 #Enable Export Button if Model has been generated
 @app.callback(
     [Output('export-button', 'disabled'),
@@ -1076,6 +1078,8 @@ def update_export_button(generate_clicks, generate_disabled):
         
         # The generate model button has been clicked at least once
         return False, {'background-color': '#3aa803'}
+
+
 
 
 
@@ -1107,7 +1111,7 @@ def generate_table(n_clicks, pdata, data1, data2):
         return None, None,None,None,None,None,None,None,[], [], [], [], ""
     
     else:
-        
+        # --------------------- Start of Model Generation
         headcount_per_hour1 = pd.DataFrame(data1)
         headcount_per_hour2 = pd.DataFrame(data2)
         personnel_data_df = pd.DataFrame(pdata)
@@ -1222,7 +1226,7 @@ def generate_table(n_clicks, pdata, data1, data2):
         store_weekly_sched_gen = weekly_sched_gen.reset_index()
         store_weekly_sched_gen = store_weekly_sched_gen.to_dict('records')
         
-        #--------------------------Hourly Generation
+        #--------------------------Hourly Schedule Generation
         hourly_sched_df_sun,  hourly_sched_df_mon,\
          hourly_sched_df_tue, hourly_sched_df_wed,\
          hourly_sched_df_thu, hourly_sched_df_fri, \
@@ -1305,9 +1309,7 @@ def generate_table(n_clicks, pdata, data1, data2):
             allocated_hourly_sched_part_time = []
             
             Part1_loop = ["Step 1 Must Start at 8", 
-                          
                           "Step 2 Must Start at 9",
-                          "Step 2.5 Must Start at 13",
                           "Step 3 Must Start at 12", 
                           "Step 4 Must Start at 11",
                           "Step 5 Must Start at 10"]
@@ -1315,7 +1317,6 @@ def generate_table(n_clicks, pdata, data1, data2):
             start_dict = {"Step 1 Must Start at 8": 8, 
                           "Step 3 Must Start at 12": 12,
                           "Step 5 Must Start at 10": 10,
-                          "Step 2.5 Must Start at 13": 13,
                           "Step 2 Must Start at 9": 9,
                           "Step 4 Must Start at 11": 11}
             
@@ -2056,6 +2057,7 @@ def process_excel_main_data(file_contents):
         # Read the Excel file into a 
         #from skiprows = 12 to 13 after change in BI system
         #df = pd.read_excel(io.BytesIO(file_contents), skiprows=13).iloc[2:-2,:]
+        #Reading of Sales Data
         df = pd.read_excel(io.BytesIO(file_contents), skiprows=13).iloc[2:-2,:]
         
         if len(df) > 0:
@@ -2183,22 +2185,17 @@ def update_output_sales(contents, data, filename):
                 (headcount_per_hour1["9.00-10.00"] - np.ceil(headcount_per_hour2["Step 1 Must Start at 8"]*0.5)).clip(lower=0)
                     #(headcount_per_hour1["9.00-10.00"] - headcount_per_hour2["Step 1 Must Start at 8"]).clip(lower=0)
 
-            #Step 2.5 = Must Start at 13 #To cover 2100 onwards
-            headcount_per_hour2["Step 2.5 Must Start at 13"] = headcount_per_hour1["21.00-22.00"]
             
             #Step 3 = Must Start at 12 #To cover 2100 onwards
-            headcount_per_hour2["Step 3 Must Start at 12"] = (headcount_per_hour1["20.00-21.00"] - \
-               headcount_per_hour2["Step 2.5 Must Start at 13"]).clip(lower=0)
+            headcount_per_hour2["Step 3 Must Start at 12"] = (headcount_per_hour1["20.00-21.00"] )
                 
             #Step 4 = Must Start at 11 #To cover 2000 onwards
             headcount_per_hour2["Step 4 Must Start at 11"] = \
-                    (headcount_per_hour1["19.00-20.00"] - headcount_per_hour2["Step 3 Must Start at 12"] - \
-                        headcount_per_hour2["Step 2.5 Must Start at 13"]).clip(lower=0)
-
+                    (headcount_per_hour1["19.00-20.00"] - headcount_per_hour2["Step 3 Must Start at 12"])
 
             #Step 5 = Must Start at 10 #To cover 1900 onwards
             headcount_per_hour2["Step 5 Must Start at 10"] = \
-                    (headcount_per_hour1["18.00-19.00"] - headcount_per_hour2["Step 2.5 Must Start at 13"] -\
+                    (headcount_per_hour1["18.00-19.00"] -\
                      headcount_per_hour2["Step 4 Must Start at 11"] - \
                      headcount_per_hour2["Step 3 Must Start at 12"]).clip(lower=0)
 
@@ -2206,7 +2203,6 @@ def update_output_sales(contents, data, filename):
             headcount_per_hour2["Step 6 Add To Cover 1700H"] = \
                     (headcount_per_hour1["17.00-18.00"] - \
                      headcount_per_hour2["Step 2 Must Start at 9"]  - \
-                         headcount_per_hour2["Step 2.5 Must Start at 13"] - \
                      headcount_per_hour2["Step 3 Must Start at 12"] - \
                      headcount_per_hour2["Step 4 Must Start at 11"] - \
                      headcount_per_hour2["Step 5 Must Start at 10"]).clip(lower=0)
@@ -2215,7 +2211,6 @@ def update_output_sales(contents, data, filename):
             #Step 7 Additional to cover 1700H that can Start at 8 to 12
             headcount_per_hour2["Step 7 Add To Cover 1600H"] = \
                     (headcount_per_hour1["16.00-17.00"] - \
-                     np.ceil(headcount_per_hour2["Step 2.5 Must Start at 13"]*0.5) -\
                      headcount_per_hour2["Step 1 Must Start at 8"] - \
                      headcount_per_hour2["Step 2 Must Start at 9"]  - \
                      headcount_per_hour2["Step 3 Must Start at 12"] - \
@@ -2227,7 +2222,6 @@ def update_output_sales(contents, data, filename):
                     (headcount_per_hour1["15.00-16.00"] - \
                      headcount_per_hour2["Step 1 Must Start at 8"] - \
                      headcount_per_hour2["Step 2 Must Start at 9"]  - \
-                         np.ceil(headcount_per_hour2["Step 2.5 Must Start at 13"]*0.5)  -\
                              np.ceil(headcount_per_hour2["Step 3 Must Start at 12"]*0.5) - \
                      headcount_per_hour2["Step 4 Must Start at 11"] - \
                      headcount_per_hour2["Step 5 Must Start at 10"]).clip(lower=0)
@@ -2270,7 +2264,6 @@ def update_output_sales(contents, data, filename):
                     (headcount_per_hour1["13.00-14.00"] - \
                      headcount_per_hour2["Step 1 Must Start at 8"] - \
                       headcount_per_hour2["Step 2 Must Start at 9"] - \
-                          headcount_per_hour2["Step 2.5 Must Start at 13"] -\
                           headcount_per_hour2["Step 3 Must Start at 12"]  - \
                          np.ceil( headcount_per_hour2["Step 4 Must Start at 11"]*0.5) - \
                       np.ceil(headcount_per_hour2["Step 5 Must Start at 10"]*0.5) - \
@@ -2389,6 +2382,11 @@ def export_hourly_csv(n_clicks, all_data):
                        "16.00-17.00","17.00-18.00","18.00-19.00","19.00-20.00",
                        "20.00-21.00","21.00-22.00"]
     
+    numeric_col = ["8.00-9.00","9.00-10.00","10.00-11.00","11.00-12.00",
+                "12.00-13.00","13.00-14.00", "14.00-15.00","15.00-16.00",
+                "16.00-17.00","17.00-18.00","18.00-19.00","19.00-20.00",
+                "20.00-21.00","21.00-22.00"]
+    
     #reordered_columns = [{'name': col, 'id': col} for col in desired_order]
     days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     dataframes = [pd.DataFrame(day_data) if day_data else pd.DataFrame(columns=reorder_col) \
@@ -2401,9 +2399,14 @@ def export_hourly_csv(n_clicks, all_data):
         
         df = df[reorder_col]
         
+        df["Active Hours"] = df[numeric_col].sum(axis = 1)
+        
+        #Add Total Cashiers
+        total_cashier_value = [df[col].sum() for col in numeric_col]
+        df.loc[len(df.index)] = ["Total Cashiers","","",""] + total_cashier_value + [""]
         # Add "Bagger Row" and "WAAC Row" rows
-        df.loc[len(df.index)] = ["Bagger"] + [""] * (len(reorder_col) - 1)
-        df.loc[len(df.index)] = ["WAAC"] + [""] * (len(reorder_col) - 1)
+        df.loc[len(df.index)] = ["Bagger"] + [""] * (len(reorder_col) - 1) + [""]
+        df.loc[len(df.index)] = ["WAAC"] + [""] * (len(reorder_col) - 1) + [""]
         
         dataframes_reordered.append(df)
         
@@ -2703,5 +2706,5 @@ def update_download_link_cdata_summary_headcount_per_hour2(data):
 
 
 if __name__ == "__main__":
-    app.run_server(debug = True)
+    app.run_server(debug = False)
     
