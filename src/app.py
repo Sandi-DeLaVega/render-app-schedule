@@ -250,7 +250,7 @@ app.layout = html.Div(
                 html.Div(
                     className="item1",
                     children=[
-                        html.Div('Scheduler App Version 7'), 
+                        html.Div('Scheduler App Version 8'), 
                         ], ), 
                 html.Div(
                     className="grid-item2",
@@ -1011,7 +1011,7 @@ app.layout = html.Div(
                 html.Div(
                     className="item2",
                     children=[
-                        html.Div('Updated as of Mar 5, 2024'), 
+                        html.Div('Updated as of Mar 6, 2024'), 
                         ], ), 
                 html.Div(
                     className="grid-item2",
@@ -1309,7 +1309,9 @@ def generate_table(n_clicks, pdata, data1, data2):
             allocated_hourly_sched_part_time = []
             
             Part1_loop = ["Step 1 Must Start at 8", 
+                          
                           "Step 2 Must Start at 9",
+                          "Step 2.5 Must Start at 13",
                           "Step 3 Must Start at 12", 
                           "Step 4 Must Start at 11",
                           "Step 5 Must Start at 10"]
@@ -1317,6 +1319,7 @@ def generate_table(n_clicks, pdata, data1, data2):
             start_dict = {"Step 1 Must Start at 8": 8, 
                           "Step 3 Must Start at 12": 12,
                           "Step 5 Must Start at 10": 10,
+                          "Step 2.5 Must Start at 13": 13,
                           "Step 2 Must Start at 9": 9,
                           "Step 4 Must Start at 11": 11}
             
@@ -2185,17 +2188,22 @@ def update_output_sales(contents, data, filename):
                 (headcount_per_hour1["9.00-10.00"] - np.ceil(headcount_per_hour2["Step 1 Must Start at 8"]*0.5)).clip(lower=0)
                     #(headcount_per_hour1["9.00-10.00"] - headcount_per_hour2["Step 1 Must Start at 8"]).clip(lower=0)
 
+            #Step 2.5 = Must Start at 13 #To cover 2100 onwards
+            headcount_per_hour2["Step 2.5 Must Start at 13"] = headcount_per_hour1["21.00-22.00"]
             
             #Step 3 = Must Start at 12 #To cover 2100 onwards
-            headcount_per_hour2["Step 3 Must Start at 12"] = (headcount_per_hour1["20.00-21.00"] )
+            headcount_per_hour2["Step 3 Must Start at 12"] = (headcount_per_hour1["20.00-21.00"] - \
+               headcount_per_hour2["Step 2.5 Must Start at 13"]).clip(lower=0)
                 
             #Step 4 = Must Start at 11 #To cover 2000 onwards
             headcount_per_hour2["Step 4 Must Start at 11"] = \
-                    (headcount_per_hour1["19.00-20.00"] - headcount_per_hour2["Step 3 Must Start at 12"])
+                    (headcount_per_hour1["19.00-20.00"] - headcount_per_hour2["Step 3 Must Start at 12"] - \
+                        headcount_per_hour2["Step 2.5 Must Start at 13"]).clip(lower=0)
+
 
             #Step 5 = Must Start at 10 #To cover 1900 onwards
             headcount_per_hour2["Step 5 Must Start at 10"] = \
-                    (headcount_per_hour1["18.00-19.00"] -\
+                    (headcount_per_hour1["18.00-19.00"] - headcount_per_hour2["Step 2.5 Must Start at 13"] -\
                      headcount_per_hour2["Step 4 Must Start at 11"] - \
                      headcount_per_hour2["Step 3 Must Start at 12"]).clip(lower=0)
 
@@ -2203,6 +2211,7 @@ def update_output_sales(contents, data, filename):
             headcount_per_hour2["Step 6 Add To Cover 1700H"] = \
                     (headcount_per_hour1["17.00-18.00"] - \
                      headcount_per_hour2["Step 2 Must Start at 9"]  - \
+                         headcount_per_hour2["Step 2.5 Must Start at 13"] - \
                      headcount_per_hour2["Step 3 Must Start at 12"] - \
                      headcount_per_hour2["Step 4 Must Start at 11"] - \
                      headcount_per_hour2["Step 5 Must Start at 10"]).clip(lower=0)
@@ -2211,6 +2220,7 @@ def update_output_sales(contents, data, filename):
             #Step 7 Additional to cover 1700H that can Start at 8 to 12
             headcount_per_hour2["Step 7 Add To Cover 1600H"] = \
                     (headcount_per_hour1["16.00-17.00"] - \
+                     np.ceil(headcount_per_hour2["Step 2.5 Must Start at 13"]*0.5) -\
                      headcount_per_hour2["Step 1 Must Start at 8"] - \
                      headcount_per_hour2["Step 2 Must Start at 9"]  - \
                      headcount_per_hour2["Step 3 Must Start at 12"] - \
@@ -2222,6 +2232,7 @@ def update_output_sales(contents, data, filename):
                     (headcount_per_hour1["15.00-16.00"] - \
                      headcount_per_hour2["Step 1 Must Start at 8"] - \
                      headcount_per_hour2["Step 2 Must Start at 9"]  - \
+                         np.ceil(headcount_per_hour2["Step 2.5 Must Start at 13"]*0.5)  -\
                              np.ceil(headcount_per_hour2["Step 3 Must Start at 12"]*0.5) - \
                      headcount_per_hour2["Step 4 Must Start at 11"] - \
                      headcount_per_hour2["Step 5 Must Start at 10"]).clip(lower=0)
@@ -2264,6 +2275,7 @@ def update_output_sales(contents, data, filename):
                     (headcount_per_hour1["13.00-14.00"] - \
                      headcount_per_hour2["Step 1 Must Start at 8"] - \
                       headcount_per_hour2["Step 2 Must Start at 9"] - \
+                          headcount_per_hour2["Step 2.5 Must Start at 13"] -\
                           headcount_per_hour2["Step 3 Must Start at 12"]  - \
                          np.ceil( headcount_per_hour2["Step 4 Must Start at 11"]*0.5) - \
                       np.ceil(headcount_per_hour2["Step 5 Must Start at 10"]*0.5) - \
