@@ -250,7 +250,7 @@ app.layout = html.Div(
                 html.Div(
                     className="item1",
                     children=[
-                        html.Div('Scheduler App Version 8'), 
+                        html.Div('Scheduler App Version 9'), 
                         ], ), 
                 html.Div(
                     className="grid-item2",
@@ -1011,7 +1011,7 @@ app.layout = html.Div(
                 html.Div(
                     className="item2",
                     children=[
-                        html.Div('Updated as of Mar 6, 2024'), 
+                        html.Div('Updated as of Mar 17, 2024'), 
                         ], ), 
                 html.Div(
                     className="grid-item2",
@@ -1364,7 +1364,10 @@ def generate_table(n_clicks, pdata, data1, data2):
                         pd.concat([full_time_matrix_df_red[["Start","Hour"]], 
                                    (full_time_matrix_df_red[numeric_col].fillna(0)*main_hourly_df_basis)], axis = 1)
                         
-                    
+                    #ensure negative values are set to zero before summing
+                    # Applying a lambda function that replaces negative values with 0 before summing
+                    max_coverage_df_full_time[numeric_col] = max_coverage_df_full_time[numeric_col].applymap(lambda x: x if x > 0 else 0)
+
                 
                     max_coverage_df_full_time["Coverage"] = max_coverage_df_full_time[numeric_col].sum(axis = 1)
                 
