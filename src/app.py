@@ -1028,7 +1028,8 @@ app.layout = html.Div(
                 dcc.Store(id = "weekly-sched-df-data", data = [], storage_type = "memory"),
                 dcc.Store(id = "weekly_sched_gen-data", data = [], storage_type = "memory"),
                 dcc.Store(id = "all-data", data = [], storage_type = "memory"),
-                
+                #Store TC
+                dcc.Store(id = "store_hourly_tc", data = [], storage_type = "memory")
              ] #end of main layout children
          ) #end of main layout
     
@@ -2114,6 +2115,7 @@ def process_excel_main_data(file_contents):
      Output('headcount_per_hour2', 'data'),
      Output('output-datatable-headcount_per_hour1', 'children'),
      Output('output-datatable-headcount_per_hour2', 'children'),
+     Output('store_hourly_tc', 'data'),
      ],
     
     [Input('upload-data-daily-sales', 'contents'),
@@ -2333,6 +2335,9 @@ def update_output_sales(contents, data, filename):
                                  "Max"]
             df_red = df.drop(columns=columns_to_remove)
             
+            df_red1 = df_red.drop(columns = ["New HC Needed"])
+            store_df_red1 = df_red1.to_dict('records')
+            
             table = html.Div([
                 html.H5(f'Uploaded Excel File: {filename}'),
                 dash_table.DataTable(
@@ -2354,17 +2359,17 @@ def update_output_sales(contents, data, filename):
             return [table], [html.Div(className = "header-article-upload" , 
                                       children = ["Upload Successful"])], \
                     store_data_df_hour1, store_data_df_hour2, \
-                    [], []
+                    [], [], store_df_red1
         
         else:
             return [html.Div(className = "header-article-upload" , 
                              children = [f"Error. Change File. Please upload sales data file with columns {', '.join(included_col)}"])], \
-                [html.Div(f"Please upload sales data file with columns {', '.join(included_col)}")], [], [], [], []
+                [html.Div(f"Please upload sales data file with columns {', '.join(included_col)}")], [], [], [], [], []
                 
     except TypeError or AttributeError:
         return [html.Div(className = "header-article-upload" , 
                          children = [f"Error. Change File. Please upload sales data file with columns {', '.join(included_col)}"])], \
-            [html.Div(f"Please upload sales data file with columns {', '.join(included_col)}")], [], [], [], []
+            [html.Div(f"Please upload sales data file with columns {', '.join(included_col)}")], [], [], [], [], []
 
 
 
@@ -2377,10 +2382,11 @@ def update_output_sales(contents, data, filename):
      Output("download-link", "style"),
      Output("download-link", "download")],
     [Input("export-button", "n_clicks")],
-    [State('all-data', 'data')],
+    [State('all-data', 'data'),
+     State('store_hourly_tc', 'data')],
     prevent_initial_call=True,
 )
-def export_hourly_csv(n_clicks, all_data):
+def export_hourly_csv(n_clicks, all_data, hourly_tc):
     
     main_dict_results = all_data["Main"]
     sun_data = main_dict_results["Sunday"]
@@ -2390,6 +2396,8 @@ def export_hourly_csv(n_clicks, all_data):
     thu_data = main_dict_results["Thursday"]
     fri_data = main_dict_results["Friday"]
     sat_data = main_dict_results["Saturday"]
+    
+    
     
     reorder_col = ["Day","Personnel Name","Employment Type","Sched",
                        "8.00-9.00","9.00-10.00","10.00-11.00","11.00-12.00",
@@ -2402,17 +2410,40 @@ def export_hourly_csv(n_clicks, all_data):
                 "16.00-17.00","17.00-18.00","18.00-19.00","19.00-20.00",
                 "20.00-21.00","21.00-22.00"]
     
+    
+    hourly_tc_df = pd.DataFrame(hourly_tc)
+    hourly_tc_df_Sun = hourly_tc_df[hourly_tc_df["Day of Week"] == "Sunday"]
+    hourly_tc_df_Mon = hourly_tc_df[hourly_tc_df["Day of Week"] == "Monday"]
+    hourly_tc_df_Tue = hourly_tc_df[hourly_tc_df["Day of Week"] == "Tuesday"] #[[numeric_col]]
+    hourly_tc_df_Wed = hourly_tc_df[hourly_tc_df["Day of Week"] == "Wednesday"] #[[numeric_col]]
+    hourly_tc_df_Thu = hourly_tc_df[hourly_tc_df["Day of Week"] == "Thursday"] #[[numeric_col]]
+    hourly_tc_df_Fri = hourly_tc_df[hourly_tc_df["Day of Week"] == "Friday"] #[[numeric_col]]
+    hourly_tc_df_Sat = hourly_tc_df[hourly_tc_df["Day of Week"] == "Saturday"] #[[numeric_col]]
+    
     #reordered_columns = [{'name': col, 'id': col} for col in desired_order]
     days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     dataframes = [pd.DataFrame(day_data) if day_data else pd.DataFrame(columns=reorder_col) \
                   for day_data in [sun_data, mon_data, tue_data, wed_data, thu_data, fri_data, sat_data]]
 
+    dataframes_hourly_tc = [hourly_tc_df_Sun, hourly_tc_df_Mon, hourly_tc_df_Tue,
+                            hourly_tc_df_Wed, hourly_tc_df_Thu, hourly_tc_df_Fri,
+                            hourly_tc_df_Sat]
+    
     dataframes_reordered = []
     # Add "Day" column and reorder columns
-    for day, df in zip(days, dataframes):
+    for day, df, df_tc in zip(days, dataframes, dataframes_hourly_tc):
         df["Day"] = day
         
+        df_tc["Day"] = day + "_Hourly TC"
+        df_tc["Personnel Name"] = ""
+        df_tc["Employment Type"] = ""
+        df_tc["Sched"] = ""
+        
         df = df[reorder_col]
+        df_tc = df_tc[reorder_col]
+        
+        #Rearrange by values per hour in numeric_col
+        df = df.sort_values(by = numeric_col)
         
         df["Active Hours"] = df[numeric_col].sum(axis = 1)
         
@@ -2423,6 +2454,9 @@ def export_hourly_csv(n_clicks, all_data):
         df.loc[len(df.index)] = ["Bagger"] + [""] * (len(reorder_col) - 1) + [""]
         df.loc[len(df.index)] = ["WAAC"] + [""] * (len(reorder_col) - 1) + [""]
         
+        
+        #add Transaction Count
+        dataframes_reordered.append(df_tc)
         dataframes_reordered.append(df)
         
     # Concatenate all DataFrames
